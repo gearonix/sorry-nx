@@ -46,7 +46,6 @@
     "lint:fix": "eslint . --fix",
     "prepublishOnly": "nr build",
     "release": "bumpp && npm publish",
-    "start": "esno src/create-gateway.ts",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
     "prepare": "simple-git-hooks",
@@ -76,6 +75,7 @@
     "*": "eslint . --fix"
   },
   "dependencies": {
+    "@neodx/std": "^0.3.0",
     "@nestjs/common": "^10.3.3",
     "@nestjs/core": "^10.3.3",
     "@nestjs/platform-express": "^10.3.3",

@@ -1,3 +1,4 @@
+import type { AnyRecord } from '@neodx/std'
 import { Command, CommandRunner, Option } from 'nest-commander'
 
 @Command({
@@ -8,7 +9,7 @@ import { Command, CommandRunner, Option } from 'nest-commander'
   description: ''
 })
 export class InitCommand extends CommandRunner {
-  public async run(param: any, options: any) {
+  public async run(param: string[], options: AnyRecord) {
     console.log({
       param,
       options
