@@ -2,6 +2,7 @@ import { isObject, isTypeOfString } from '@neodx/std'
 import type { Options as ExecaOptions } from 'execa'
 import { execaCommand as $ } from 'execa'
 import { resolve } from 'node:path'
+import { ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
 import type {
   RunCommandOptions,
   WorkspaceProject
@@ -41,6 +42,20 @@ export abstract class AbstractPackageManager {
 
   public get agent() {
     return this.command
+  }
+
+  protected async updateProjects(
+    workspaces: WorkspaceProject[] = []
+  ): Promise<void> {
+    const cwd = process.cwd()
+
+    const root = {
+      name: ROOT_PROJECT,
+      location: cwd,
+      targets: await this.resolveProjectTargets(cwd)
+    } satisfies WorkspaceProject
+
+    this.projects = [root, ...workspaces]
   }
 
   public abstract computeWorkspaceProjects(): Promise<void>

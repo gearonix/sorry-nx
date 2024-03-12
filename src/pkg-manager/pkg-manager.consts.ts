@@ -42,3 +42,5 @@ export const packageManagerMatchers = [
     manager: BunPackageManager
   }
 ] satisfies PackageManagerMatcher[]
+
+export const ROOT_PROJECT = 'ROOT_PROJECT_WORKSPACE' as const

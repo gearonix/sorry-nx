@@ -8,5 +8,5 @@ export interface RunCommandOptions {
   target: string
   args?: string
   packageJsonPath: string
-  project: string | null
+  project: string
 }

@@ -1,7 +1,7 @@
 import { parseJson } from '@neodx/fs'
 import { isTruthy, isTypeOfString } from '@neodx/std'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
-import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
+import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
 import type {
   RunCommandOptions,
   WorkspaceProject
@@ -21,20 +21,17 @@ export class YarnBerryPackageManager extends AbstractPackageManager {
         const project = parseJson<WorkspaceProject>(serializedMeta)
         const targets = await this.resolveProjectTargets(project.location)
 
-        return {
-          ...project,
-          targets
-        }
+        return { ...project, targets }
       })
     )
 
-    this.projects = workspaces.filter(isTruthy)
+    await this.updateProjects(workspaces.filter(isTruthy))
   }
 
   public createRunCommand(opts: RunCommandOptions): string[] {
     const command = ['--silent', 'run', opts.target]
 
-    if (opts.project) {
+    if (opts.project !== ROOT_PROJECT) {
       command.unshift('workspace', opts.project)
     }
 

@@ -1,7 +1,7 @@
 import { parseJson } from '@neodx/fs'
 import { entries, isObject, isTypeOfString } from '@neodx/std'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
-import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
+import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
 import type { RunCommandOptions } from '@/pkg-manager/pkg-manager.types'
 import { toAbsolutePath } from '@/shared/misc'
 
@@ -28,7 +28,9 @@ export class YarnPackageManager extends AbstractPackageManager {
 
     const workspaces = parseJson<YarnWorkspaceMeta>(jsonString)
 
-    if (!isObject(workspaces)) return
+    if (!isObject(workspaces)) {
+      return this.updateProjects()
+    }
 
     const workspacesEntries = entries(workspaces)
     const yarnWorkspaces = await Promise.all(
@@ -44,13 +46,13 @@ export class YarnPackageManager extends AbstractPackageManager {
       })
     )
 
-    this.projects = yarnWorkspaces
+    await this.updateProjects(yarnWorkspaces)
   }
 
   public createRunCommand(opts: RunCommandOptions): string[] {
     const command = ['--silent', 'run', opts.target]
 
-    if (opts.project) {
+    if (opts.project !== ROOT_PROJECT) {
       command.unshift('workspace', opts.project)
     }
 

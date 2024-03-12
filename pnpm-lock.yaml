@@ -44,6 +44,9 @@ importers:
       nest-commander:
         specifier: ^3.12.5
         version: 3.12.5(@nestjs/common@10.3.3)(@nestjs/core@10.3.3)(@types/inquirer@9.0.7)(typescript@5.3.3)
+      path-equal:
+        specifier: ^1.2.5
+        version: 1.2.5
       which:
         specifier: ^4.0.0
         version: 4.0.0
@@ -5361,6 +5364,10 @@ packages:
   /parseurl@1.3.3:
     resolution: {integrity: sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==}
     engines: {node: '>= 0.8'}
+    dev: false
+
+  /path-equal@1.2.5:
+    resolution: {integrity: sha512-i73IctDr3F2W+bsOWDyyVm/lqsXO47aY9nsFZUjTT/aljSbkxHxxCoyZ9UUrM8jK0JVod+An+rl48RCsvWM+9g==}
     dev: false
 
   /path-exists@4.0.0:

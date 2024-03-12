@@ -1,18 +1,9 @@
 import { parseJson } from '@neodx/fs'
-import {
-  entries,
-  hasOwn,
-  isObject,
-  isTypeOfString,
-  toArray
-} from '@neodx/std'
+import { entries, hasOwn, isObject, isTypeOfString } from '@neodx/std'
 import { resolve } from 'node:path'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
-import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
-import type {
-  RunCommandOptions,
-  WorkspaceProject
-} from '@/pkg-manager/pkg-manager.types'
+import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
+import type { RunCommandOptions } from '@/pkg-manager/pkg-manager.types'
 
 interface NpmWorkspaceMetadata {
   name?: string
@@ -38,17 +29,10 @@ export class NpmPackageManager extends AbstractPackageManager {
 
     const cwd = process.cwd()
 
-    const rootProject = {
-      name: 'root',
-      location: cwd,
-      targets: await this.resolveProjectTargets(cwd)
-    } satisfies WorkspaceProject
-
     const output = await this.exec('ls --workspaces --json').catch(() => {})
 
     if (!output) {
-      this.projects = toArray(rootProject)
-      return
+      return this.updateProjects()
     }
 
     const metadata = parseJson(output)
@@ -73,13 +57,13 @@ export class NpmPackageManager extends AbstractPackageManager {
       })
     )
 
-    this.projects = [rootProject, ...npmWorkspaces]
+    this.updateProjects(npmWorkspaces)
   }
 
   public createRunCommand(opts: RunCommandOptions): string[] {
     const command = ['run', opts.target, '--silent']
 
-    if (opts.project && opts.project !== 'root') {
+    if (opts.project !== ROOT_PROJECT) {
       command.push(`--workspace=${opts.project}`)
     }
 
