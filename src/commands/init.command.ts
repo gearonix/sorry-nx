@@ -1,5 +1,7 @@
 import type { AnyRecord } from '@neodx/std'
-import { Command, CommandRunner, Option } from 'nest-commander'
+import { Command, CommandRunner } from 'nest-commander'
+import type { AbstractPackageManager } from '@/pkg-manager'
+import { InjectPackageManager } from '@/pkg-manager'
 
 @Command({
   name: 'init',
@@ -9,18 +11,22 @@ import { Command, CommandRunner, Option } from 'nest-commander'
   description: ''
 })
 export class InitCommand extends CommandRunner {
+  constructor(
+    @InjectPackageManager() private readonly manager: AbstractPackageManager
+  ) {
+    super()
+  }
+
   public async run(param: string[], options: AnyRecord) {
     console.log({
       param,
-      options
+      options,
+      manager: this.manager
     })
-  }
 
-  @Option({
-    flags: '-n, --number [number]',
-    description: ''
-  })
-  public parseNumber(val: string): number {
-    return Number(val)
+    // console.log(this.manager.agent)
+    const workspaces = await this.manager.getWorkspaces()
+
+    console.log(workspaces)
   }
 }

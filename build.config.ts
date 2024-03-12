@@ -2,7 +2,7 @@ import { defineBuildConfig } from 'unbuild'
 import { resolve } from 'path'
 
 export default defineBuildConfig({
-  entries: ['bin/gx'],
+  entries: ['src/main'],
   declaration: true,
   clean: true,
   rollup: {

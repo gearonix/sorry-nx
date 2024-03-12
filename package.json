@@ -13,21 +13,21 @@
     "url": "git+https://github.com/antfu/pkg-placeholder.git"
   },
   "bin": {
-    "gx": "dist/bin/gx.cjs"
+    "gx": "bin/gx.mjs"
   },
   "bugs": "https://github.com/antfu/pkg-placeholder/issues",
   "keywords": [],
   "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./dist/bin/gx.d.ts",
-      "import": "./dist/bin/gx.mjs",
-      "require": "./dist/bin/gx.cjs"
+      "types": "./dist/main.d.ts",
+      "import": "./dist/main.mjs",
+      "require": "./dist/main.cjs"
     }
   },
-  "main": "./dist/bin/gx.mjs",
-  "module": "./dist/bin/gx.mjs",
-  "types": "./dist/bin/gx.d.ts",
+  "main": "./dist/main.cjs",
+  "module": "./dist/main.mjs",
+  "types": "./dist/main.d.ts",
   "typesVersions": {
     "*": {
       "*": [
@@ -75,11 +75,13 @@
     "*": "eslint . --fix"
   },
   "dependencies": {
+    "@neodx/fs": "^0.0.11",
     "@neodx/std": "^0.3.0",
     "@nestjs/common": "^10.3.3",
     "@nestjs/core": "^10.3.3",
     "@nestjs/platform-express": "^10.3.3",
     "eslint-kit": "^10.19.0",
+    "execa": "^8.0.1",
     "nest-commander": "^3.12.5"
   }
 }
