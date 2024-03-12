@@ -1,12 +1,9 @@
 import { parseJson } from '@neodx/fs'
 import { entries, isObject, isTypeOfString } from '@neodx/std'
-import { resolve } from 'node:path'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
-import type {
-  RunCommandOptions,
-  WorkspaceProject
-} from '@/pkg-manager/pkg-manager.types'
+import type { RunCommandOptions } from '@/pkg-manager/pkg-manager.types'
+import { toAbsolutePath } from '@/shared/misc'
 
 type YarnWorkspaceMeta = Record<
   string,
@@ -22,25 +19,32 @@ export class YarnPackageManager extends AbstractPackageManager {
     super(PackageManager.YARN)
   }
 
-  public async getWorkspaces(): Promise<WorkspaceProject[]> {
+  public async computeWorkspaceProjects(): Promise<void> {
     const stdout = await this.exec('workspaces info')
 
     const jsonStartIndex = stdout.indexOf('{')
     const jsonEndIndex = stdout.lastIndexOf('}')
     const jsonString = stdout.slice(jsonStartIndex, jsonEndIndex + 1)
 
-    const workspaces = parseJson(jsonString) as unknown
+    const workspaces = parseJson<YarnWorkspaceMeta>(jsonString)
 
-    if (!isObject(workspaces)) return []
+    if (!isObject(workspaces)) return
 
-    const yarnWorkspaces = entries(workspaces as YarnWorkspaceMeta).map(
-      ([name, metadata]) => ({
-        name,
-        location: resolve(process.cwd(), metadata.location)
+    const workspacesEntries = entries(workspaces)
+    const yarnWorkspaces = await Promise.all(
+      workspacesEntries.map(async ([name, metadata]) => {
+        const location = toAbsolutePath(metadata.location)
+        const targets = await this.resolveProjectTargets(location)
+
+        return {
+          name,
+          location,
+          targets
+        }
       })
     )
 
-    return yarnWorkspaces
+    this.projects = yarnWorkspaces
   }
 
   public createRunCommand(opts: RunCommandOptions): string[] {

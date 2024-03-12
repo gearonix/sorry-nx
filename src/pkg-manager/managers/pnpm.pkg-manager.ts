@@ -1,11 +1,8 @@
 import { parseJson } from '@neodx/fs'
-import { hasOwn, isObjectLike, isTypeOfString } from '@neodx/std'
+import { isTypeOfString } from '@neodx/std'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
-import type {
-  RunCommandOptions,
-  WorkspaceProject
-} from '@/pkg-manager/pkg-manager.types'
+import type { RunCommandOptions } from '@/pkg-manager/pkg-manager.types'
 
 type PnpmWorkspaceMeta = Array<{
   name: string
@@ -19,20 +16,25 @@ export class PnpmPackageManager extends AbstractPackageManager {
     super(PackageManager.PNPM)
   }
 
-  public async getWorkspaces(): Promise<WorkspaceProject[]> {
-    const isWorkspaceMetadata = (val: unknown): val is PnpmWorkspaceMeta =>
-      isObjectLike(val) && hasOwn(val, 'length')
-
+  public async computeWorkspaceProjects(): Promise<void> {
     const output = await this.exec('list --recursive --depth -1 --json ')
+    const workspaces = parseJson<PnpmWorkspaceMeta>(output)
 
-    const workspaces = parseJson(output) as unknown
+    if (!Array.isArray(workspaces)) return
 
-    if (!isWorkspaceMetadata(workspaces)) return []
+    const pnpmWorkspaces = await Promise.all(
+      workspaces.map(async ({ name, path }) => {
+        const targets = await this.resolveProjectTargets(path)
 
-    return workspaces.map(({ name, path }) => ({
-      name,
-      location: path
-    }))
+        return {
+          name,
+          location: path,
+          targets
+        }
+      })
+    )
+
+    this.projects = pnpmWorkspaces
   }
 
   public createRunCommand(opts: RunCommandOptions): string[] {

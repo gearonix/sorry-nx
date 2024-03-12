@@ -4,14 +4,10 @@ import { dirname, resolve } from 'node:path'
 import * as process from 'process'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
-import type {
-  RunCommandOptions,
-  WorkspaceProject
-} from '@/pkg-manager/pkg-manager.types'
+import type { RunCommandOptions } from '@/pkg-manager/pkg-manager.types'
 import type { PackageJson } from '@/shared/json'
 import { readJson } from '@/shared/json'
 
-// TODO: add yarn@berry support
 // TODO: split file structure to modules
 
 export class BunPackageManager extends AbstractPackageManager {
@@ -19,10 +15,8 @@ export class BunPackageManager extends AbstractPackageManager {
     super(PackageManager.BUN)
   }
 
-  public async getWorkspaces(): Promise<WorkspaceProject[]> {
+  public async computeWorkspaceProjects(): Promise<void> {
     const packageJson = await readJson<PackageJson>('package.json')
-
-    if (!packageJson) return []
 
     const rawWorkspaces = packageJson.workspaces
 
@@ -37,19 +31,21 @@ export class BunPackageManager extends AbstractPackageManager {
 
     const bunWorkspaces = await Promise.all(
       projectPatterns.map(async (pattern) => {
-        const scopedPkgJson = (await readJson(pattern)) as PackageJson
+        const scopedPkgJson = await readJson<PackageJson>(pattern)
 
         const workspaceName = scopedPkgJson.name ?? null
         const workspaceDir = dirname(pattern)
+        const targets = await this.resolveProjectTargets(workspaceDir)
 
         return {
           name: workspaceName,
-          location: workspaceDir
+          location: workspaceDir,
+          targets
         }
       })
     )
 
-    return bunWorkspaces
+    this.projects = bunWorkspaces
   }
 
   public createRunCommand(opts: RunCommandOptions): string[] {

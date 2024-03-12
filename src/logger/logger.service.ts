@@ -42,8 +42,8 @@ export class LoggerService {
     }
   }
 
-  public serialize(msg: unknown, method = this.info) {
-    method(serializeJson(msg))
+  public serialize(msg: unknown, method = this.log) {
+    method.call(this, serializeJson(msg))
   }
 
   public log(msg: string) {

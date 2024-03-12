@@ -30,14 +30,16 @@ export class ShowCommand extends CommandRunner {
 
   // TODO: add usable parameter
   public async run(_: string[], options: ShowCommandOptions) {
-    const workspaces = await this.manager.getWorkspaces()
+    await this.manager.computeWorkspaceProjects()
+
+    const { projects } = this.manager
 
     if (options.json) {
-      this.logger.serialize(workspaces)
+      this.logger.serialize(projects)
       return
     }
 
-    for (const workspace of workspaces) {
+    for (const workspace of projects) {
       this.logger.log(
         `${chalk.cyan(workspace.name)} - ${chalk.white(workspace.location)}`
       )

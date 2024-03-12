@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import { resolve } from 'node:path'
 import { ERROR_PREFIX } from '@/logger'
 
 export function invariant<T extends unknown>(
@@ -11,3 +12,9 @@ export function invariant<T extends unknown>(
     process.exit(1)
   }
 }
+
+export const toAbsolutePath = (localPath: string) =>
+  resolve(process.cwd(), localPath)
+
+export const truncateString = (str: string, maxLength = 14) =>
+  str.length > maxLength ? str.slice(0, maxLength - 3).concat('...') : str
