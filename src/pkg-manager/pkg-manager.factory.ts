@@ -31,7 +31,6 @@ export class PackageManagerFactory {
       ? resolve(lockPath, '../package.json')
       : resolve(process.cwd(), 'package.json')
 
-    await ensureFile(lockPath)
     await ensureFile(packageJsonPath)
 
     const pkg = (await readJson(packageJsonPath)) as PackageJson

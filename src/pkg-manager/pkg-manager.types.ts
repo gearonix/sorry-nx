@@ -2,3 +2,10 @@ export interface WorkspaceProject {
   name: string | null
   location: string
 }
+
+export interface RunCommandOptions {
+  target: string
+  args?: string
+  packageJsonPath: string
+  project: string | null
+}

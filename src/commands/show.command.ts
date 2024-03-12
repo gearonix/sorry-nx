@@ -1,5 +1,11 @@
+import { serializeJson } from '@neodx/fs'
 import chalk from 'chalk'
-import { Command, CommandRunner, Option } from 'nest-commander'
+import {
+  CliUtilityService,
+  Command,
+  CommandRunner,
+  Option
+} from 'nest-commander'
 import type { AbstractPackageManager } from '@/pkg-manager'
 import { InjectPackageManager } from '@/pkg-manager'
 import { addLibraryPrefix } from '@/shared/misc'
@@ -15,7 +21,8 @@ export interface ShowCommandOptions {
 })
 export class ShowCommand extends CommandRunner {
   constructor(
-    @InjectPackageManager() private readonly manager: AbstractPackageManager
+    @InjectPackageManager() private readonly manager: AbstractPackageManager,
+    private readonly utilityService: CliUtilityService
   ) {
     super()
   }
@@ -25,7 +32,8 @@ export class ShowCommand extends CommandRunner {
     const workspaces = await this.manager.getWorkspaces()
 
     if (options.json) {
-      console.info(workspaces)
+      const serializedJson = serializeJson(workspaces)
+      console.info(serializedJson)
       return
     }
 
@@ -39,9 +47,10 @@ export class ShowCommand extends CommandRunner {
   }
 
   @Option({
+    name: 'json',
     flags: '-json, --json [boolean]'
   })
-  public returnAsJson(val: string): boolean {
-    return JSON.parse(val)
+  public parseJson(val: string): boolean {
+    return this.utilityService.parseBoolean(val)
   }
 }

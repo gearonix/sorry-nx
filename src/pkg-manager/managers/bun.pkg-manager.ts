@@ -1,9 +1,13 @@
 import { scan } from '@neodx/fs'
-import { resolve } from 'node:path'
+import { isTypeOfString } from '@neodx/std'
+import { dirname, resolve } from 'node:path'
 import * as process from 'process'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
-import type { WorkspaceProject } from '@/pkg-manager/pkg-manager.types'
+import type {
+  RunCommandOptions,
+  WorkspaceProject
+} from '@/pkg-manager/pkg-manager.types'
 import type { PackageJson } from '@/shared/json'
 import { readJson } from '@/shared/json'
 
@@ -36,7 +40,7 @@ export class BunPackageManager extends AbstractPackageManager {
         const scopedPkgJson = (await readJson(pattern)) as PackageJson
 
         const workspaceName = scopedPkgJson.name ?? null
-        const workspaceDir = resolve(pattern, '..')
+        const workspaceDir = dirname(pattern)
 
         return {
           name: workspaceName,
@@ -46,5 +50,22 @@ export class BunPackageManager extends AbstractPackageManager {
     )
 
     return bunWorkspaces
+  }
+
+  public createRunCommand(opts: RunCommandOptions): string[] {
+    const command = ['--silent', 'run', opts.target]
+    const projectCwd = dirname(opts.packageJsonPath)
+
+    if (opts.project) {
+      // Doesn't work for some reason
+      // https://github.com/oven-sh/bun/issues/6386
+      command.push(`--cwd=${projectCwd}`)
+    }
+
+    if (isTypeOfString(opts.args)) {
+      command.push('--', opts.args)
+    }
+
+    return command
   }
 }

@@ -1,9 +1,12 @@
 import { parseJson } from '@neodx/fs'
-import { entries, hasOwn, isObject } from '@neodx/std'
+import { entries, hasOwn, isObject, isTypeOfString } from '@neodx/std'
 import { resolve } from 'node:path'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
-import type { WorkspaceProject } from '@/pkg-manager/pkg-manager.types'
+import type {
+  RunCommandOptions,
+  WorkspaceProject
+} from '@/pkg-manager/pkg-manager.types'
 
 interface NpmWorkspaceMetadata {
   name?: string
@@ -47,5 +50,19 @@ export class NpmPackageManager extends AbstractPackageManager {
     )
 
     return npmWorkspaces
+  }
+
+  public createRunCommand(opts: RunCommandOptions): string[] {
+    const command = ['run', opts.target, '--silent']
+
+    if (opts.project) {
+      command.push(`--workspace=${opts.project}`)
+    }
+
+    if (isTypeOfString(opts.args)) {
+      command.push('--', opts.args)
+    }
+
+    return command
   }
 }

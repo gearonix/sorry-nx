@@ -1,8 +1,11 @@
 import { parseJson } from '@neodx/fs'
-import { hasOwn, isObjectLike } from '@neodx/std'
+import { hasOwn, isObjectLike, isTypeOfString } from '@neodx/std'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
-import type { WorkspaceProject } from '@/pkg-manager/pkg-manager.types'
+import type {
+  RunCommandOptions,
+  WorkspaceProject
+} from '@/pkg-manager/pkg-manager.types'
 
 type PnpmWorkspaceMeta = Array<{
   name: string
@@ -30,5 +33,21 @@ export class PnpmPackageManager extends AbstractPackageManager {
       name,
       location: path
     }))
+  }
+
+  public createRunCommand(opts: RunCommandOptions): string[] {
+    const command = ['run', '--silent', opts.target]
+
+    if (opts.project) {
+      command.splice(1, 0, `--filter=${opts.project}`)
+    }
+
+    if (isTypeOfString(opts.args)) {
+      command.push('--', opts.args)
+    }
+
+    console.log(command)
+
+    return command
   }
 }
