@@ -9,6 +9,7 @@ export interface PackageJson {
   version: string
   type?: 'module' | 'commonjs'
   dependencies?: Record<string, string>
+  packageManager?: string
   peerDependencies?: Record<string, string>
   devDependencies?: Record<string, string>
   scripts?: Record<string, string>

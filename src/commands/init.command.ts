@@ -18,15 +18,7 @@ export class InitCommand extends CommandRunner {
   }
 
   public async run(param: string[], options: AnyRecord) {
-    console.log({
-      param,
-      options,
-      manager: this.manager
-    })
-
-    // console.log(this.manager.agent)
     const workspaces = await this.manager.getWorkspaces()
-
     console.log(workspaces)
   }
 }

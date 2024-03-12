@@ -27,10 +27,6 @@ export class YarnPackageManager extends AbstractPackageManager {
       cwd
     })
 
-    console.log({
-      output: output.stdout
-    })
-
     const stdout = output.stdout
 
     const jsonStartIndex = stdout.indexOf('{')
