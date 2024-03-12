@@ -1,5 +1,5 @@
 {
-  "name": "pkg",
+  "name": "gx",
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@8.15.4",
@@ -12,19 +12,22 @@
     "type": "git",
     "url": "git+https://github.com/antfu/pkg-placeholder.git"
   },
+  "bin": {
+    "gx": "dist/bin/gx.cjs"
+  },
   "bugs": "https://github.com/antfu/pkg-placeholder/issues",
   "keywords": [],
   "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "types": "./dist/bin/gx.d.ts",
+      "import": "./dist/bin/gx.mjs",
+      "require": "./dist/bin/gx.cjs"
     }
   },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/bin/gx.mjs",
+  "module": "./dist/bin/gx.mjs",
+  "types": "./dist/bin/gx.d.ts",
   "typesVersions": {
     "*": {
       "*": [
@@ -70,9 +73,13 @@
     "pre-commit": "pnpm lint-staged && pnpm typecheck"
   },
   "lint-staged": {
-    "*": "eslint --fix"
+    "*": "eslint . --fix"
   },
   "dependencies": {
-    "eslint-kit": "^10.19.0"
+    "@nestjs/common": "^10.3.3",
+    "@nestjs/core": "^10.3.3",
+    "@nestjs/platform-express": "^10.3.3",
+    "eslint-kit": "^10.19.0",
+    "nest-commander": "^3.12.5"
   }
 }
