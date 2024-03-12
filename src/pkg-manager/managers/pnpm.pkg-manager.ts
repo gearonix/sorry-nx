@@ -1,6 +1,5 @@
 import { parseJson } from '@neodx/fs'
 import { hasOwn, isObjectLike } from '@neodx/std'
-import { execaCommand as $ } from 'execa'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
 import type { WorkspaceProject } from '@/pkg-manager/pkg-manager.types'
@@ -21,11 +20,9 @@ export class PnpmPackageManager extends AbstractPackageManager {
     const isWorkspaceMetadata = (val: unknown): val is PnpmWorkspaceMeta =>
       isObjectLike(val) && hasOwn(val, 'length')
 
-    const output = await $('pnpm list --recursive --depth -1 --json ', {
-      cwd: process.cwd()
-    })
+    const output = await this.exec('list --recursive --depth -1 --json ')
 
-    const workspaces = parseJson(output.stdout) as unknown
+    const workspaces = parseJson(output) as unknown
 
     if (!isWorkspaceMetadata(workspaces)) return []
 

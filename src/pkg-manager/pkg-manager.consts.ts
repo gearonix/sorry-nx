@@ -11,7 +11,7 @@ export enum PackageManager {
   YARN = 'yarn',
   PNPM = 'pnpm',
   BUN = 'bun',
-  YARN_BERRY = 'yarn@berry'
+  YARN_BERRY = 'yarn'
 }
 
 interface PackageManagerMatcher {

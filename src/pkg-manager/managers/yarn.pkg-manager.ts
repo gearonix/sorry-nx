@@ -1,6 +1,5 @@
 import { parseJson } from '@neodx/fs'
 import { entries, isObject } from '@neodx/std'
-import { execaCommand as $ } from 'execa'
 import { resolve } from 'node:path'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
@@ -21,13 +20,7 @@ export class YarnPackageManager extends AbstractPackageManager {
   }
 
   public async getWorkspaces(): Promise<WorkspaceProject[]> {
-    const cwd = process.cwd()
-
-    const output = await $('yarn workspaces info', {
-      cwd
-    })
-
-    const stdout = output.stdout
+    const stdout = await this.exec('workspaces info')
 
     const jsonStartIndex = stdout.indexOf('{')
     const jsonEndIndex = stdout.lastIndexOf('}')
@@ -40,7 +33,7 @@ export class YarnPackageManager extends AbstractPackageManager {
     const yarnWorkspaces = entries(workspaces as YarnWorkspaceMeta).map(
       ([name, metadata]) => ({
         name,
-        location: resolve(cwd, metadata.location)
+        location: resolve(process.cwd(), metadata.location)
       })
     )
 
