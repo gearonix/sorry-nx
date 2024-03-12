@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
-import { RunCommand } from '@/commands/run.command'
-import { ShowCommand } from '@/commands/show.command'
+import { Commands } from '@/commands'
+import { LoggerModule } from '@/logger'
 import { PackageManagerModule } from '@/pkg-manager'
 
 @Module({
-  imports: [PackageManagerModule],
-  providers: [RunCommand, ShowCommand]
+  imports: [PackageManagerModule, LoggerModule],
+  providers: [...Commands]
 })
 export class AppModule {}

@@ -1,14 +1,16 @@
 import { ensureFile } from '@neodx/fs'
-import { hasOwn, isNil } from '@neodx/std'
+import { hasOwn, isObject } from '@neodx/std'
+import { Inject } from '@nestjs/common'
 import chalk from 'chalk'
 import { Command, CommandRunner, Option } from 'nest-commander'
 import { dirname, resolve } from 'node:path'
+import { LoggerService } from '@/logger'
 import type { AbstractPackageManager } from '@/pkg-manager'
 import { InjectPackageManager } from '@/pkg-manager'
 import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
 import type { PackageJson } from '@/shared/json'
 import { readJson } from '@/shared/json'
-import { addLibraryPrefix } from '@/shared/misc'
+import { invariant } from '@/shared/misc'
 
 export interface BaseInitOptions {
   args?: string
@@ -23,7 +25,8 @@ export interface BaseInitOptions {
 })
 export class RunCommand extends CommandRunner {
   constructor(
-    @InjectPackageManager() private readonly manager: AbstractPackageManager
+    @InjectPackageManager() private readonly manager: AbstractPackageManager,
+    @Inject(LoggerService) private readonly logger: LoggerService
   ) {
     super()
   }
@@ -31,12 +34,9 @@ export class RunCommand extends CommandRunner {
   public async run(params: string[], options: BaseInitOptions) {
     const [target, project = null] = params
 
-    if (!target) {
-      console.log('no target')
-      return
-    }
+    invariant(target, 'Target is not provided.')
 
-    const startTime = Date.now()
+    const timeEnd = this.logger.time()
 
     let packageJsonPath = resolve(process.cwd(), 'package.json')
 
@@ -47,28 +47,24 @@ export class RunCommand extends CommandRunner {
         (workspace) => workspace.name === project
       )
 
-      if (!projectMeta) {
-        // TODO improve errors rewrite to class
-        throw new Error(
-          `Project ${chalk.cyan(project)} not found. Please ensure it exists.`
-        )
-      }
+      invariant(
+        projectMeta,
+        `Project ${project} not found. Please ensure it exists.`
+      )
 
       packageJsonPath = resolve(projectMeta.location, 'package.json')
     }
 
     await ensureFile(packageJsonPath)
 
-    const pkg = (await readJson(packageJsonPath)) as PackageJson
+    const pkg = await readJson<PackageJson>(packageJsonPath)
 
     const projectName = project ?? pkg.name ?? 'root'
 
-    if (isNil(pkg.scripts) || !hasOwn(pkg.scripts, target)) {
-      // TODO improve errors
-      throw new Error(
-        `Could not find target ${chalk.cyan(target)} in project ${chalk.white(projectName)}.`
-      )
-    }
+    invariant(
+      isObject(pkg.scripts) && hasOwn(pkg.scripts, target),
+      `Could not find target ${chalk.cyan(target)} in project ${chalk.white(projectName)}.`
+    )
 
     const command = this.manager.createRunCommand({
       target,
@@ -86,15 +82,13 @@ export class RunCommand extends CommandRunner {
 
       await this.manager.exec(command, { stdio: 'inherit', cwd })
     } catch (error) {
-      console.log(error)
+      this.logger.error(
+        `Error occurred while executing a command via ${this.manager.agent} agent.`
+      )
+      this.logger.error(error)
     }
 
-    // TODO: improve logger
-    console.info(
-      addLibraryPrefix(
-        `Successfully ran target ${chalk.cyan(target)} for project ${chalk.white(project ?? pkg.name)} (${Date.now() - startTime} ms)`
-      )
-    )
+    timeEnd(`Successfully ran target ${target} for project ${projectName}`)
   }
 
   @Option({
@@ -106,9 +100,7 @@ export class RunCommand extends CommandRunner {
 
     const isValid = args.match(/^--\w+=\w+$/)
 
-    if (!isValid) {
-      throw new Error('not valid')
-    }
+    invariant(isValid, "The 'args' parameter is invalid. ")
 
     return args
   }

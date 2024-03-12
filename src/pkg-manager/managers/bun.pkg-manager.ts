@@ -20,7 +20,7 @@ export class BunPackageManager extends AbstractPackageManager {
   }
 
   public async getWorkspaces(): Promise<WorkspaceProject[]> {
-    const packageJson = await readJson('package.json')
+    const packageJson = await readJson<PackageJson>('package.json')
 
     if (!packageJson) return []
 

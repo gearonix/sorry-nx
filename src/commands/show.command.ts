@@ -1,4 +1,4 @@
-import { serializeJson } from '@neodx/fs'
+import { Inject } from '@nestjs/common'
 import chalk from 'chalk'
 import {
   CliUtilityService,
@@ -6,9 +6,9 @@ import {
   CommandRunner,
   Option
 } from 'nest-commander'
+import { LoggerService } from '@/logger'
 import type { AbstractPackageManager } from '@/pkg-manager'
 import { InjectPackageManager } from '@/pkg-manager'
-import { addLibraryPrefix } from '@/shared/misc'
 
 export interface ShowCommandOptions {
   json?: boolean
@@ -22,6 +22,7 @@ export interface ShowCommandOptions {
 export class ShowCommand extends CommandRunner {
   constructor(
     @InjectPackageManager() private readonly manager: AbstractPackageManager,
+    @Inject(LoggerService) private readonly logger: LoggerService,
     private readonly utilityService: CliUtilityService
   ) {
     super()
@@ -32,16 +33,13 @@ export class ShowCommand extends CommandRunner {
     const workspaces = await this.manager.getWorkspaces()
 
     if (options.json) {
-      const serializedJson = serializeJson(workspaces)
-      console.info(serializedJson)
+      this.logger.serialize(workspaces)
       return
     }
 
     for (const workspace of workspaces) {
-      console.info(
-        addLibraryPrefix(
-          `${chalk.cyan(workspace.name)} - ${chalk.white(workspace.location)}`
-        )
+      this.logger.log(
+        `${chalk.cyan(workspace.name)} - ${chalk.white(workspace.location)}`
       )
     }
   }
