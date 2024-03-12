@@ -20,7 +20,7 @@ export class LoggerService {
 
   public error(msg: unknown) {
     if (isTypeOfString(msg)) {
-      console.error(`\n ${this.errorPrefix}  ${chalk.bold(chalk.red(msg))}\n`)
+      console.error(`\n ${this.errorPrefix} ${chalk.bold(chalk.red(msg))}`)
     } else if (msg instanceof Error && msg.stack) {
       console.error(chalk.bold(chalk.red(msg.stack)))
     } else {
@@ -30,19 +30,19 @@ export class LoggerService {
 
   public info(msg: unknown) {
     if (isTypeOfString(msg)) {
-      console.info(`\n${this.libraryPrefix}  ${chalk.bold(msg)}\n`)
+      console.info(`\n${this.libraryPrefix} ${chalk.bold(msg)}`)
     } else console.info(msg)
   }
 
-  public time(method = this.log) {
+  public time(method = this.info) {
     const startTime = Date.now()
 
     return (msg: string) => {
-      method(`${msg} (${Date.now() - startTime} ms)`)
+      method.call(this, `${msg} (${Date.now() - startTime} ms)`)
     }
   }
 
-  public serialize(msg: unknown, method = this.log) {
+  public serialize(msg: unknown, method = this.info) {
     method(serializeJson(msg))
   }
 

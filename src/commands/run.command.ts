@@ -1,7 +1,6 @@
 import { ensureFile } from '@neodx/fs'
 import { hasOwn, isObject } from '@neodx/std'
 import { Inject } from '@nestjs/common'
-import chalk from 'chalk'
 import { Command, CommandRunner, Option } from 'nest-commander'
 import { dirname, resolve } from 'node:path'
 import { LoggerService } from '@/logger'
@@ -33,16 +32,13 @@ export class RunCommand extends CommandRunner {
 
   public async run(params: string[], options: BaseInitOptions) {
     const [target, project = null] = params
+    const timeEnd = this.logger.time()
+    let packageJsonPath = resolve(process.cwd(), 'package.json')
 
     invariant(target, 'Target is not provided.')
 
-    const timeEnd = this.logger.time()
-
-    let packageJsonPath = resolve(process.cwd(), 'package.json')
-
     if (project) {
       const workspaces = await this.manager.getWorkspaces()
-
       const projectMeta = workspaces.find(
         (workspace) => workspace.name === project
       )
@@ -58,12 +54,11 @@ export class RunCommand extends CommandRunner {
     await ensureFile(packageJsonPath)
 
     const pkg = await readJson<PackageJson>(packageJsonPath)
-
     const projectName = project ?? pkg.name ?? 'root'
 
     invariant(
       isObject(pkg.scripts) && hasOwn(pkg.scripts, target),
-      `Could not find target ${chalk.cyan(target)} in project ${chalk.white(projectName)}.`
+      `Could not find target ${target} in project ${projectName}.`
     )
 
     const command = this.manager.createRunCommand({
@@ -86,6 +81,7 @@ export class RunCommand extends CommandRunner {
         `Error occurred while executing a command via ${this.manager.agent} agent.`
       )
       this.logger.error(error)
+      return
     }
 
     timeEnd(`Successfully ran target ${target} for project ${projectName}`)

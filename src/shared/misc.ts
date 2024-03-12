@@ -6,7 +6,7 @@ export function invariant<T extends unknown>(
   message: string
 ): asserts condition is NonNullable<T> {
   if (!condition) {
-    console.error(`\n ${ERROR_PREFIX}  ${chalk.bold(chalk.red(message))}\n`)
+    console.error(`\n ${ERROR_PREFIX} ${chalk.bold(chalk.red(message))}`)
 
     process.exit(1)
   }
