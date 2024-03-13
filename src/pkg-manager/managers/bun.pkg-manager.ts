@@ -39,11 +39,7 @@ export class BunPackageManager extends AbstractPackageManager {
         const { targets } =
           await this.resolver.resolveProjectTargets(workspaceDir)
 
-        return {
-          name: workspaceName,
-          location: workspaceDir,
-          targets
-        }
+        return { name: workspaceName, location: workspaceDir, targets }
       })
     )
 

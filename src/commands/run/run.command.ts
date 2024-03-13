@@ -102,10 +102,7 @@ export class RunCommand extends CommandRunner {
         { defaultArgs: options.args, projectCwd }
       )
 
-      await $(`${command} ${args}`, {
-        cwd,
-        env
-      })
+      await $(`${command} ${args}`, { cwd, env })
     }
 
     timeEnd(`Successfully ran target ${target} for project ${project}`)
@@ -119,7 +116,6 @@ export class RunCommand extends CommandRunner {
     if (!args) return
 
     const isValid = args.match(/^--\w+=\w+$/)
-
     invariant(isValid, "The 'args' parameter is invalid. ")
 
     return args

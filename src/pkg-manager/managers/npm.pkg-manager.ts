@@ -53,11 +53,7 @@ export class NpmPackageManager extends AbstractPackageManager {
         const { targets } =
           await this.resolver.resolveProjectTargets(absolutePath)
 
-        return {
-          name,
-          location: absolutePath,
-          targets
-        }
+        return { name, location: absolutePath, targets }
       })
     )
 

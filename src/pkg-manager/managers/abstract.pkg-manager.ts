@@ -26,10 +26,7 @@ export abstract class AbstractPackageManager {
   public async exec(args: string | string[], options?: ExecaOptions) {
     const output = await $(
       `${this.command} ${isTypeOfString(args) ? args : args.join(' ')}`,
-      {
-        cwd: process.cwd(),
-        ...options
-      }
+      { cwd: process.cwd(), ...options }
     )
 
     return output.stdout as string

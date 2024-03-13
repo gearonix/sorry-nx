@@ -39,11 +39,7 @@ export class YarnPackageManager extends AbstractPackageManager {
         const location = toAbsolutePath(metadata.location)
         const { targets } = await this.resolver.resolveProjectTargets(location)
 
-        return {
-          name,
-          location,
-          targets
-        }
+        return { name, location, targets }
       })
     )
 
