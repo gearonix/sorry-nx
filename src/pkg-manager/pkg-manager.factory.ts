@@ -1,5 +1,5 @@
 import { ensureFile, scan } from '@neodx/fs'
-import { isTypeOfString, uniq, values } from '@neodx/std'
+import { includesIn, isTypeOfString, uniq, values } from '@neodx/std'
 import chalk from 'chalk'
 import { execaCommand as $ } from 'execa'
 import { basename, resolve } from 'node:path'
@@ -10,15 +10,22 @@ import {
   PackageManager,
   packageManagerMatchers
 } from '@/pkg-manager/pkg-manager.consts'
+import type { ResolverService } from '@/resolver/resolver.service'
 import type { PackageJson } from '@/shared/json'
 import { readJson } from '@/shared/json'
 import { invariant } from '@/shared/misc'
 import { cmdExists } from '@/shared/sh'
 
+export interface PackageManagerFactoryOptions {
+  resolver: ResolverService
+}
+
 export class PackageManagerFactory {
   private static logger = new LoggerService()
 
-  public static async detect(): Promise<AbstractPackageManager> {
+  public static async detect(
+    opts: PackageManagerFactoryOptions
+  ): Promise<AbstractPackageManager> {
     let programmaticAgent: PackageManager
 
     const agents = values(PackageManager)
@@ -48,10 +55,12 @@ export class PackageManagerFactory {
         Number.parseInt(version, 10) > 1
 
       if (isYarnBerry) {
-        return new YarnBerryPackageManager()
+        return new YarnBerryPackageManager(opts)
       }
 
-      if (agents.includes(agent)) {
+      const includesAgent = includesIn(agents)
+
+      if (includesAgent(agent)) {
         programmaticAgent = agent
       }
     }
@@ -76,6 +85,6 @@ export class PackageManagerFactory {
       })
     }
 
-    return new match.manager()
+    return new match.manager(opts)
   }
 }

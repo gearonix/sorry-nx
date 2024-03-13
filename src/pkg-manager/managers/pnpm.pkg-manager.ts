@@ -3,6 +3,7 @@ import { isTruthy, isTypeOfString } from '@neodx/std'
 import { pathEqual } from 'path-equal'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
+import type { PackageManagerFactoryOptions } from '@/pkg-manager/pkg-manager.factory'
 import type { RunCommandOptions } from '@/pkg-manager/pkg-manager.types'
 
 type PnpmWorkspaceMeta = Array<{
@@ -13,12 +14,12 @@ type PnpmWorkspaceMeta = Array<{
 }>
 
 export class PnpmPackageManager extends AbstractPackageManager {
-  constructor() {
-    super(PackageManager.PNPM)
+  constructor(opts: PackageManagerFactoryOptions) {
+    super(opts, PackageManager.PNPM)
   }
 
   public async computeWorkspaceProjects(): Promise<void> {
-    const output = await this.exec('list --recursive --depth -1 --json ')
+    const output = await this.exec('list --recursive --depth -1 --json')
     const workspaces = parseJson<PnpmWorkspaceMeta>(output)
 
     if (!Array.isArray(workspaces)) {
@@ -31,7 +32,7 @@ export class PnpmPackageManager extends AbstractPackageManager {
 
         if (isRoot) return null
 
-        const targets = await this.resolveProjectTargets(path)
+        const { targets } = await this.resolver.resolveProjectTargets(path)
         return {
           name,
           location: path,

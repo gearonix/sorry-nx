@@ -1,8 +1,10 @@
 import { parseJson } from '@neodx/fs'
 import { entries, hasOwn, isObject, isTypeOfString } from '@neodx/std'
+import { Injectable } from '@nestjs/common'
 import { resolve } from 'node:path'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
+import type { PackageManagerFactoryOptions } from '@/pkg-manager/pkg-manager.factory'
 import type { RunCommandOptions } from '@/pkg-manager/pkg-manager.types'
 
 interface NpmWorkspaceMetadata {
@@ -18,9 +20,10 @@ interface NpmWorkspaceMetadata {
   >
 }
 
+@Injectable()
 export class NpmPackageManager extends AbstractPackageManager {
-  constructor() {
-    super(PackageManager.NPM)
+  constructor(opts: PackageManagerFactoryOptions) {
+    super(opts, PackageManager.NPM)
   }
 
   public async computeWorkspaceProjects(): Promise<void> {
@@ -47,7 +50,8 @@ export class NpmPackageManager extends AbstractPackageManager {
         const normalizedPath = dependency.resolved.replace(/^file:..\//, '')
         const absolutePath = resolve(cwd, normalizedPath)
 
-        const targets = await this.resolveProjectTargets(absolutePath)
+        const { targets } =
+          await this.resolver.resolveProjectTargets(absolutePath)
 
         return {
           name,

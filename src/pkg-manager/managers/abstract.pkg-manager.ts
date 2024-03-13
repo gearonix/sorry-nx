@@ -1,19 +1,25 @@
-import { isObject, isTypeOfString } from '@neodx/std'
+import { isTypeOfString } from '@neodx/std'
 import type { Options as ExecaOptions } from 'execa'
 import { execaCommand as $ } from 'execa'
-import { resolve } from 'node:path'
 import { ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
+import type { PackageManagerFactoryOptions } from '@/pkg-manager/pkg-manager.factory'
 import type {
   RunCommandOptions,
   WorkspaceProject
 } from '@/pkg-manager/pkg-manager.types'
-import type { PackageJson } from '@/shared/json'
-import { readJson } from '@/shared/json'
+import type { ResolverService } from '@/resolver/resolver.service'
 
 export abstract class AbstractPackageManager {
+  // TODO: map set
   public projects: WorkspaceProject[] = []
+  protected readonly resolver: ResolverService
 
-  constructor(private command: string) {
+  constructor(
+    protected options: PackageManagerFactoryOptions,
+    private command: string
+  ) {
+    this.resolver = options.resolver
+
     this.computeWorkspaceProjects()
   }
 
@@ -29,17 +35,6 @@ export abstract class AbstractPackageManager {
     return output.stdout as string
   }
 
-  public async resolveProjectTargets(
-    projectPath: string
-  ): Promise<Record<string, string>> {
-    const pkgJsonPath = resolve(projectPath, 'package.json')
-    const pkg = await readJson<PackageJson>(pkgJsonPath)
-
-    if (!isObject(pkg.scripts)) return {}
-
-    return pkg.scripts
-  }
-
   public get agent() {
     return this.command
   }
@@ -48,11 +43,12 @@ export abstract class AbstractPackageManager {
     workspaces: WorkspaceProject[] = []
   ): Promise<void> {
     const cwd = process.cwd()
+    const { targets } = await this.resolver.resolveProjectTargets(cwd)
 
     const root = {
       name: ROOT_PROJECT,
       location: cwd,
-      targets: await this.resolveProjectTargets(cwd)
+      targets
     } satisfies WorkspaceProject
 
     this.projects = [root, ...workspaces]

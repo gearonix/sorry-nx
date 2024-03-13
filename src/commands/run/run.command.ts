@@ -1,15 +1,17 @@
-import { ensureFile } from '@neodx/fs'
+import { ensureDir } from '@neodx/fs'
 import { hasOwn, isEmpty, isObject } from '@neodx/std'
 import { Inject } from '@nestjs/common'
+import { execaCommand } from 'execa'
 import { Command, CommandRunner, Option } from 'nest-commander'
-import { dirname, resolve } from 'node:path'
+import { dirname } from 'node:path'
 import { buildTargetInfoPrompt } from '@/commands/run/run.prompts'
+import { createIndependentTargetCommand } from '@/commands/run/utils/independent-target-command'
 import { LoggerService } from '@/logger'
 import type { AbstractPackageManager } from '@/pkg-manager'
 import { InjectPackageManager } from '@/pkg-manager'
 import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
-import type { PackageJson } from '@/shared/json'
-import { readJson } from '@/shared/json'
+import { ResolverService } from '@/resolver/resolver.service'
+import type { AnyTarget } from '@/resolver/targets/targets-resolver.schema'
 import { invariant } from '@/shared/misc'
 
 export interface BaseInitOptions {
@@ -26,7 +28,8 @@ export interface BaseInitOptions {
 export class RunCommand extends CommandRunner {
   constructor(
     @InjectPackageManager() private readonly manager: AbstractPackageManager,
-    @Inject(LoggerService) private readonly logger: LoggerService
+    @Inject(LoggerService) private readonly logger: LoggerService,
+    @Inject(ResolverService) private readonly resolver: ResolverService
   ) {
     super()
   }
@@ -36,14 +39,14 @@ export class RunCommand extends CommandRunner {
       await this.manager.computeWorkspaceProjects()
     }
 
-    const [target, project = 'root'] = isEmpty(params)
+    const [target, project = ROOT_PROJECT] = isEmpty(params)
       ? await buildTargetInfoPrompt(this.manager.projects)
       : params
 
     invariant(target, 'Please specify a target. It cannot be empty.')
 
     const timeEnd = this.logger.time()
-    let packageJsonPath = resolve(process.cwd(), 'package.json')
+    let projectCwd = process.cwd()
 
     if (project) {
       const projectMeta = this.manager.projects.find(
@@ -55,43 +58,57 @@ export class RunCommand extends CommandRunner {
         `Project ${project} not found. Please ensure it exists.`
       )
 
-      packageJsonPath = resolve(projectMeta.location, 'package.json')
+      projectCwd = projectMeta.location
     }
 
-    await ensureFile(packageJsonPath)
+    await ensureDir(projectCwd)
 
-    const pkg = await readJson<PackageJson>(packageJsonPath)
-    const projectName = project ?? ROOT_PROJECT
+    const { targets, type: targetType } =
+      await this.resolver.resolveProjectTargets(projectCwd)
 
     invariant(
-      isObject(pkg.scripts) && hasOwn(pkg.scripts, target),
-      `Could not find target ${target} in project ${projectName}.`
+      isObject(targets) && hasOwn(targets, target),
+      `Could not find target ${target} in project ${project}.`
     )
 
-    const command = this.manager.createRunCommand({
-      target,
-      project,
-      packageJsonPath,
-      args: options.args
-    })
+    if (targetType === 'package-scripts') {
+      const command = this.manager.createRunCommand({
+        target,
+        project,
+        packageJsonPath: projectCwd,
+        args: options.args
+      })
 
-    try {
-      // https://github.com/oven-sh/bun/issues/6386
-      const cwd =
-        this.manager.agent === PackageManager.BUN
-          ? dirname(packageJsonPath)
-          : process.cwd()
+      try {
+        // https://github.com/oven-sh/bun/issues/6386
+        const cwd =
+          this.manager.agent === PackageManager.BUN
+            ? dirname(projectCwd)
+            : process.cwd()
 
-      await this.manager.exec(command, { stdio: 'inherit', cwd })
-    } catch (error) {
-      this.logger.error(
-        `Error occurred while executing a command via ${this.manager.agent} agent.`
-      )
-      this.logger.error(error)
-      return
+        await this.manager.exec(command, { stdio: 'inherit', cwd })
+      } catch (error) {
+        this.logger.error(
+          `Error occurred while executing a command via ${this.manager.agent} agent.`
+        )
+        this.logger.error(error)
+        return
+      }
     }
 
-    timeEnd(`Successfully ran target ${target} for project ${projectName}`)
+    if (targetType === 'targets') {
+      const { command, env, cwd, args } = createIndependentTargetCommand(
+        targets[target] as AnyTarget,
+        { defaultArgs: options.args, projectCwd }
+      )
+
+      await execaCommand(`${command} ${args}`, {
+        cwd,
+        env
+      })
+    }
+
+    timeEnd(`Successfully ran target ${target} for project ${project}`)
   }
 
   @Option({

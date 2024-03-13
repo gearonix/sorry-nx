@@ -3,6 +3,7 @@ import { BunPackageManager } from '@/pkg-manager/managers/bun.pkg-manager'
 import { NpmPackageManager } from '@/pkg-manager/managers/npm.pkg-manager'
 import { PnpmPackageManager } from '@/pkg-manager/managers/pnpm.pkg-manager'
 import { YarnPackageManager } from '@/pkg-manager/managers/yarn.pkg-manager'
+import type { PackageManagerFactoryOptions } from '@/pkg-manager/pkg-manager.factory'
 
 export const PACKAGE_MANAGER = 'PACKAGE_MANAGER' as const
 
@@ -17,7 +18,7 @@ export enum PackageManager {
 interface PackageManagerMatcher {
   lockFile: string
   name: PackageManager
-  manager: new () => AbstractPackageManager
+  manager: new (opts: PackageManagerFactoryOptions) => AbstractPackageManager
 }
 
 export const packageManagerMatchers = [

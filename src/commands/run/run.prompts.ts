@@ -3,6 +3,7 @@ import { entries, keys } from '@neodx/std'
 import inquirer from 'inquirer'
 import { ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
 import type { WorkspaceProject } from '@/pkg-manager/pkg-manager.types'
+import { formatTargetCommand } from '@/resolver/targets/targets-resolver.utils'
 import { invariant, truncateString } from '@/shared/misc'
 
 export async function buildTargetInfoPrompt(
@@ -68,7 +69,7 @@ async function buildTargetPromptTree(projects: WorkspaceProject[]): Promise<{
               project: project.name,
               target: targetName
             },
-            short: truncateString(script, 14)
+            short: truncateString(formatTargetCommand(script), 14)
           })
         )
 

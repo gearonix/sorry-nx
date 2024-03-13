@@ -2,6 +2,7 @@ import { parseJson } from '@neodx/fs'
 import { entries, isObject, isTypeOfString } from '@neodx/std'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
+import type { PackageManagerFactoryOptions } from '@/pkg-manager/pkg-manager.factory'
 import type { RunCommandOptions } from '@/pkg-manager/pkg-manager.types'
 import { toAbsolutePath } from '@/shared/misc'
 
@@ -15,8 +16,8 @@ type YarnWorkspaceMeta = Record<
 >
 
 export class YarnPackageManager extends AbstractPackageManager {
-  constructor() {
-    super(PackageManager.YARN)
+  constructor(opts: PackageManagerFactoryOptions) {
+    super(opts, PackageManager.YARN)
   }
 
   public async computeWorkspaceProjects(): Promise<void> {
@@ -36,7 +37,7 @@ export class YarnPackageManager extends AbstractPackageManager {
     const yarnWorkspaces = await Promise.all(
       workspacesEntries.map(async ([name, metadata]) => {
         const location = toAbsolutePath(metadata.location)
-        const targets = await this.resolveProjectTargets(location)
+        const { targets } = await this.resolver.resolveProjectTargets(location)
 
         return {
           name,

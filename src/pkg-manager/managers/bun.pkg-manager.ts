@@ -3,7 +3,8 @@ import { isTypeOfString } from '@neodx/std'
 import { dirname, resolve } from 'node:path'
 import * as process from 'process'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
-import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
+import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
+import type { PackageManagerFactoryOptions } from '@/pkg-manager/pkg-manager.factory'
 import type { RunCommandOptions } from '@/pkg-manager/pkg-manager.types'
 import type { PackageJson } from '@/shared/json'
 import { readJson } from '@/shared/json'
@@ -11,8 +12,8 @@ import { readJson } from '@/shared/json'
 // TODO: split file structure to modules
 
 export class BunPackageManager extends AbstractPackageManager {
-  constructor() {
-    super(PackageManager.BUN)
+  constructor(opts: PackageManagerFactoryOptions) {
+    super(opts, PackageManager.BUN)
   }
 
   public async computeWorkspaceProjects(): Promise<void> {
@@ -35,7 +36,8 @@ export class BunPackageManager extends AbstractPackageManager {
 
         const workspaceName = scopedPkgJson.name ?? null
         const workspaceDir = dirname(pattern)
-        const targets = await this.resolveProjectTargets(workspaceDir)
+        const { targets } =
+          await this.resolver.resolveProjectTargets(workspaceDir)
 
         return {
           name: workspaceName,
