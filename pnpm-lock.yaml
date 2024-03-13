@@ -60,6 +60,9 @@ importers:
       '@antfu/ni':
         specifier: ^0.21.12
         version: 0.21.12
+      '@types/ini':
+        specifier: ^4.1.0
+        version: 4.1.0
       '@types/inquirer':
         specifier: ^9.0.7
         version: 9.0.7
@@ -1489,6 +1492,10 @@ packages:
 
   /@types/estree@1.0.0:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
+    dev: true
+
+  /@types/ini@4.1.0:
+    resolution: {integrity: sha512-mTehMtc+xtnWBBvqizcqYCktKDBH2WChvx1GU3Sfe4PysFDXiNe+1YwtpVX1MDtCa4NQrSPw2+3HmvXHY3gt1w==}
     dev: true
 
   /@types/inquirer@9.0.7:

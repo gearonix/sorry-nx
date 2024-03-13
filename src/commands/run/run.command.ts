@@ -1,7 +1,7 @@
 import { ensureDir } from '@neodx/fs'
 import { hasOwn, isEmpty, isObject } from '@neodx/std'
 import { Inject } from '@nestjs/common'
-import { execaCommand } from 'execa'
+import { execaCommand as $ } from 'execa'
 import { Command, CommandRunner, Option } from 'nest-commander'
 import { dirname } from 'node:path'
 import { buildTargetInfoPrompt } from '@/commands/run/run.prompts'
@@ -102,7 +102,7 @@ export class RunCommand extends CommandRunner {
         { defaultArgs: options.args, projectCwd }
       )
 
-      await execaCommand(`${command} ${args}`, {
+      await $(`${command} ${args}`, {
         cwd,
         env
       })
