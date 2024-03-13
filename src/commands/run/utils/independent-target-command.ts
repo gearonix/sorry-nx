@@ -17,41 +17,36 @@ export function createIndependentTargetCommand(
   opts: AnyTarget,
   { defaultArgs, projectCwd }: CreateIndependentCommandOptions
 ) {
-  const normalizeCommand = ({
-    command,
-    commands,
-    parallel
-  }: Partial<AnyTarget>): string => {
+  const normalizeCommand = () => {
+    const cmd = opts.command
+
     invariant(
-      command ?? commands,
+      cmd ?? opts.commands,
       'Either "command" or "commands" must be provided.'
     )
 
-    const result = Array.isArray(command) ? command.join(' ') : command
+    const result = Array.isArray(cmd) ? cmd.join(' ') : cmd
 
     if (!result) {
-      const separator = parallel
+      const separator = opts.parallel
         ? TargetSeparators.PARALLEL
         : TargetSeparators.NORMAL
 
-      return commands!.join(separator)
+      return opts.commands!.join(separator)
     }
 
     return result
   }
 
-  const normalizeEnv = ({
-    env,
-    envFile
-  }: Partial<AnyTarget>): Record<string, string> | undefined => {
-    if (envFile) return envfile.parse(toAbsolutePath(envFile))
+  const normalizeEnv = (): Record<string, string> | undefined => {
+    if (opts.envFile) return envfile.parse(toAbsolutePath(opts.envFile))
     if (env) return env
     return undefined
   }
 
-  const command = normalizeCommand(opts)
+  const command = normalizeCommand()
   const args = compact([defaultArgs, opts.args]).join(' ')
-  const env = normalizeEnv(opts)
+  const env = normalizeEnv()
   const cwd = toAbsolutePath(opts.cwd ?? projectCwd ?? process.cwd())
 
   return {
