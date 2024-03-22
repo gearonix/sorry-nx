@@ -8,7 +8,7 @@ import {
 } from 'nest-commander'
 import { LoggerService } from '@/logger'
 import type { AbstractPackageManager } from '@/pkg-manager'
-import { InjectPackageManager } from '@/pkg-manager'
+import { InjectPackageManager } from '@/pkg-manager/pkg-manager.decorator'
 
 export interface ShowCommandOptions {
   json?: boolean

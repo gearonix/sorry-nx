@@ -45,3 +45,4 @@ export const packageManagerMatchers = [
 ] satisfies PackageManagerMatcher[]
 
 export const ROOT_PROJECT = '$$root' as const
+export const UNNAMED_PROJECT = '$$unnamed' as const

@@ -20,6 +20,9 @@ module.exports = configure({
         rules: {
             'import/extensions': 'warn',
             'import/no-unresolved': 'warn'
-        }
+        },
+        extends: [
+            'plugin:oxlint/recommended'
+        ]
     }
 })

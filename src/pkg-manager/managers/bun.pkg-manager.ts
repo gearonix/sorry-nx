@@ -3,7 +3,10 @@ import { isTypeOfString } from '@neodx/std'
 import { dirname, resolve } from 'node:path'
 import * as process from 'process'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
-import { PackageManager } from '@/pkg-manager/pkg-manager.consts'
+import {
+  PackageManager,
+  UNNAMED_PROJECT
+} from '@/pkg-manager/pkg-manager.consts'
 import type { PackageManagerFactoryOptions } from '@/pkg-manager/pkg-manager.factory'
 import type { RunCommandOptions } from '@/pkg-manager/pkg-manager.types'
 import type { PackageJson } from '@/shared/json'
@@ -34,7 +37,7 @@ export class BunPackageManager extends AbstractPackageManager {
       projectPatterns.map(async (pattern) => {
         const scopedPkgJson = await readJson<PackageJson>(pattern)
 
-        const workspaceName = scopedPkgJson.name ?? null
+        const workspaceName = scopedPkgJson.name ?? UNNAMED_PROJECT
         const workspaceDir = dirname(pattern)
         const { targets, type } =
           await this.resolver.resolveProjectTargets(workspaceDir)

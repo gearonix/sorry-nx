@@ -12,11 +12,13 @@ import { dirname } from 'node:path'
 import { buildTargetInfoPrompt } from '@/commands/run/run.prompts'
 import { LoggerService } from '@/logger'
 import type { AbstractPackageManager } from '@/pkg-manager'
-import { InjectPackageManager } from '@/pkg-manager'
 import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
+import { InjectPackageManager } from '@/pkg-manager/pkg-manager.decorator'
 import { ResolverService } from '@/resolver/resolver.service'
 import { invariant } from '@/shared/misc'
 import { createIndependentTargetCommand } from './utils/independent-target-command'
+
+// TODO: comment everything
 
 export interface RunCommandOptions {
   args?: string
@@ -54,7 +56,7 @@ export class RunCommand extends CommandRunner {
     invariant(target, 'Please specify a target. It cannot be empty.')
 
     const timeEnd = this.logger.time()
-    let projectCwd = process.cwd()
+    let projectCwd = options.cwd ?? process.cwd()
 
     if (project) {
       const projectMeta = this.manager.projects.find(
@@ -73,11 +75,13 @@ export class RunCommand extends CommandRunner {
 
     const { targets, type: targetType } =
       await this.resolver.resolveProjectTargets(projectCwd)
+    const hasTarget = isObject(targets) && hasOwn(targets, target)
 
-    invariant(
-      isObject(targets) && hasOwn(targets, target),
-      `Could not find target ${target} in project ${project}.`
-    )
+    if (!hasTarget) {
+      return this.logger.error(
+        `Could not find target ${target} in project ${project}.`
+      )
+    }
 
     if (targetType === 'package-scripts') {
       const command = this.manager.createRunCommand({
