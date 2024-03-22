@@ -1,10 +1,4 @@
-import {
-  compact,
-  concurrent,
-  concurrently,
-  isEmpty,
-  isTypeOfBoolean
-} from '@neodx/std'
+import { concurrent, concurrently, isEmpty, isTypeOfBoolean } from '@neodx/std'
 import { Inject } from '@nestjs/common'
 import {
   CliUtilityService,
@@ -18,7 +12,7 @@ import { LoggerService } from '@/logger'
 import type { AbstractPackageManager } from '@/pkg-manager'
 import { InjectPackageManager } from '@/pkg-manager/pkg-manager.decorator'
 import type { WorkspaceProject } from '@/pkg-manager/pkg-manager.types'
-import { invariant } from '@/shared/misc'
+import { invariant, joinCommas, serializeCommas } from '@/shared/misc'
 
 export interface RunManyCommandOptions {
   all?: boolean
@@ -60,7 +54,6 @@ export class RunManyCommand extends CommandRunner {
         opts.projects?.includes(name)
 
       if (opts.exclude) return projects.filter(isExcluded)
-
       if (opts.projects) return projects.filter(isIncluded)
 
       this.logger.error(
@@ -87,7 +80,6 @@ export class RunManyCommand extends CommandRunner {
           this.logger.log(
             `${this.logger.greaterSignPrefix} gx run ${project}:${target}\n`
           )
-
           this.logger.mute()
           try {
             await this.runner.run([target, project], {})
@@ -102,9 +94,6 @@ export class RunManyCommand extends CommandRunner {
     )
 
     const projectNames = projectsToRun.map(({ name }) => name)
-
-    const joinCommas = (arr: string[]) => arr.join(', ')
-
     timeEnd(
       `Successfully ran targets ${joinCommas(targetsToRun)} for projects ${joinCommas(projectNames)}`
     )
@@ -150,5 +139,3 @@ export class RunManyCommand extends CommandRunner {
     return serializeCommas(targets)
   }
 }
-
-const serializeCommas = (str: string) => compact(str.split(', '))

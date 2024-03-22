@@ -11,8 +11,8 @@ import { resolve } from 'node:path'
 import { ConfigService } from '@/config'
 import { LoggerService } from '@/logger'
 import type { AbstractPackageManager } from '@/pkg-manager'
-import { InjectPackageManager } from '@/pkg-manager/pkg-manager.decorator'
 import { ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
+import { InjectPackageManager } from '@/pkg-manager/pkg-manager.decorator'
 import type { WorkspaceProject } from '@/pkg-manager/pkg-manager.types'
 import type { TargetOptions } from '@/resolver/targets/targets-resolver.schema'
 import type { PackageJson, PackageScripts } from '@/shared/json'
@@ -40,7 +40,6 @@ export class MigrateCommand extends CommandRunner {
 
   public async run(params: string[], options: MigrateCommandOptions) {
     await this.manager.computeWorkspaceProjects()
-
     const { projects: workspaceProjects } = this.manager
 
     if (options.all) {
@@ -53,7 +52,6 @@ export class MigrateCommand extends CommandRunner {
     }
 
     const [projectName = ROOT_PROJECT] = params
-
     const projectMeta = workspaceProjects.find(
       ({ name }) => name === projectName
     )
@@ -89,8 +87,9 @@ export class MigrateCommand extends CommandRunner {
 
       await writeJson(commandsFilePath, serializedTargets)
 
-      this.logger.info(`Generated ${this.cfg.commandsFile} in ${projectCwd}`)
-      return
+      return this.logger.info(
+        `Generated ${this.cfg.commandsFile} in ${projectCwd}`
+      )
     }
 
     if (!options?.all) {
