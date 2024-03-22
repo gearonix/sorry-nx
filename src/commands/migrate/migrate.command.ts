@@ -25,7 +25,7 @@ export interface MigrateCommandOptions {
 
 @Command({
   name: 'migrate',
-  description: 'Migrate package.json commands to a standardized format.'
+  description: 'Migrate from package.json scripts to a standardized format.'
 })
 export class MigrateCommand extends CommandRunner {
   constructor(
