@@ -28,6 +28,7 @@ export class ResolverService {
       this.cfg.preferredResolvingOrder.includes(key)
     )
 
+    // Iterate through resolvers and resolve targets
     for (const [type, resolveTargets] of entries(normalizedResolvers)) {
       const targets = await resolveTargets(cwd)
 
@@ -48,14 +49,12 @@ export class ResolverService {
     TargetType,
     (cwd: string) => Promise<TargetOptions | null>
   > {
-    // TODO: rewrite
     return {
-      'package-scripts': this.pkgResolver.resolvePackageJsonScripts.bind(
-        this.pkgResolver
-      ),
-      targets: this.targetsResolver.resolveProjectTargets.bind(
-        this.targetsResolver
-      )
+      'package-scripts': async (cwd) =>
+        this.pkgResolver.resolvePackageJsonScripts(cwd),
+      // eslint-disable-next-line prettier/prettier
+      'targets': async (cwd)  =>
+          this.targetsResolver.resolveProjectTargets(cwd)
     }
   }
 }

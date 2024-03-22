@@ -1,5 +1,6 @@
 import { parseJson } from '@neodx/fs'
-import { isTruthy, isTypeOfString } from '@neodx/std'
+import { concurrently, isTruthy, isTypeOfString } from '@neodx/std'
+import { cpus } from 'node:os'
 import { pathEqual } from 'path-equal'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
@@ -26,8 +27,9 @@ export class PnpmPackageManager extends AbstractPackageManager {
       return this.updateProjects()
     }
 
-    const pnpmWorkspaces = await Promise.all(
-      workspaces.map(async ({ name, path }) => {
+    const pnpmWorkspaces = await concurrently(
+      workspaces,
+      async ({ name, path }) => {
         const isRoot = pathEqual(path, process.cwd())
         if (isRoot) return null
 
@@ -35,7 +37,8 @@ export class PnpmPackageManager extends AbstractPackageManager {
           await this.resolver.resolveProjectTargets(path)
 
         return { name, location: path, targets, type }
-      })
+      },
+      cpus().length
     )
 
     await this.updateProjects(pnpmWorkspaces.filter(isTruthy))

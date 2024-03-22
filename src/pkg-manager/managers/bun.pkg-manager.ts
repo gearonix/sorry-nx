@@ -1,5 +1,6 @@
 import { scan } from '@neodx/fs'
-import { isTypeOfString } from '@neodx/std'
+import { concurrently, isTypeOfString } from '@neodx/std'
+import { cpus } from 'node:os'
 import { dirname, resolve } from 'node:path'
 import * as process from 'process'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
@@ -11,8 +12,6 @@ import type { PackageManagerFactoryOptions } from '@/pkg-manager/pkg-manager.fac
 import type { RunCommandOptions } from '@/pkg-manager/pkg-manager.types'
 import type { PackageJson } from '@/shared/json'
 import { readJson } from '@/shared/json'
-
-// TODO: split file structure to modules
 
 export class BunPackageManager extends AbstractPackageManager {
   constructor(opts: PackageManagerFactoryOptions) {
@@ -33,8 +32,9 @@ export class BunPackageManager extends AbstractPackageManager {
       workspaces.map((match) => resolve(match, 'package.json'))
     )
 
-    const bunWorkspaces = await Promise.all(
-      projectPatterns.map(async (pattern) => {
+    const bunWorkspaces = await concurrently(
+      projectPatterns,
+      async (pattern) => {
         const scopedPkgJson = await readJson<PackageJson>(pattern)
 
         const workspaceName = scopedPkgJson.name ?? UNNAMED_PROJECT
@@ -43,7 +43,8 @@ export class BunPackageManager extends AbstractPackageManager {
           await this.resolver.resolveProjectTargets(workspaceDir)
 
         return { name: workspaceName, location: workspaceDir, targets, type }
-      })
+      },
+      cpus().length
     )
 
     await this.updateProjects(bunWorkspaces)

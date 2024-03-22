@@ -1,4 +1,10 @@
-import { concurrent, concurrently, isEmpty, isTypeOfBoolean } from '@neodx/std'
+import {
+  concurrent,
+  concurrently,
+  hasOwn,
+  isEmpty,
+  isTypeOfBoolean
+} from '@neodx/std'
 import { Inject } from '@nestjs/common'
 import {
   CliUtilityService,
@@ -24,8 +30,8 @@ export interface RunManyCommandOptions {
 
 @Command({
   name: 'run-many',
-  // TODO: add descriptions
-  description: ''
+  description:
+    'Run multiple commands defined in project targets or package.json scripts.'
 })
 export class RunManyCommand extends CommandRunner {
   constructor(
@@ -43,7 +49,7 @@ export class RunManyCommand extends CommandRunner {
     await this.manager.computeWorkspaceProjects()
 
     const timeEnd = this.logger.time()
-    const { projects } = this.manager
+    const projects = Array.from(this.manager.projects)
 
     const computeProjectsToRun = (): WorkspaceProject[] => {
       if (opts.all) return projects
@@ -76,6 +82,11 @@ export class RunManyCommand extends CommandRunner {
         const targetsConcurrency = Math.min(targetsToRun.length, cpus().length)
 
         const splitTargets = concurrent<string, void>(async (target) => {
+          if (!hasOwn(projectMeta.targets, target)) {
+            projectsToRun.splice(projectsToRun.indexOf(projectMeta), 1)
+            return
+          }
+
           const project = projectMeta.name
           this.logger.log(
             `${this.logger.greaterSignPrefix} gx run ${project}:${target}\n`
@@ -94,9 +105,12 @@ export class RunManyCommand extends CommandRunner {
     )
 
     const projectNames = projectsToRun.map(({ name }) => name)
-    timeEnd(
-      `Successfully ran targets ${joinCommas(targetsToRun)} for projects ${joinCommas(projectNames)}`
-    )
+
+    if (!isEmpty(projectsToRun)) {
+      timeEnd(
+        `Successfully ran targets ${joinCommas(targetsToRun)} for projects ${joinCommas(projectNames)}`
+      )
+    }
   }
 
   @Option({

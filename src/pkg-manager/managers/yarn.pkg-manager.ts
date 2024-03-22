@@ -1,5 +1,6 @@
 import { parseJson } from '@neodx/fs'
-import { entries, isObject, isTypeOfString } from '@neodx/std'
+import { concurrently, entries, isObject, isTypeOfString } from '@neodx/std'
+import { cpus } from 'node:os'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
 import type { PackageManagerFactoryOptions } from '@/pkg-manager/pkg-manager.factory'
@@ -32,16 +33,16 @@ export class YarnPackageManager extends AbstractPackageManager {
     if (!isObject(workspaces)) {
       return this.updateProjects()
     }
-
-    const workspacesEntries = entries(workspaces)
-    const yarnWorkspaces = await Promise.all(
-      workspacesEntries.map(async ([name, metadata]) => {
+    const yarnWorkspaces = await concurrently(
+      entries(workspaces),
+      async ([name, metadata]) => {
         const location = toAbsolutePath(metadata.location)
         const { targets, type } =
           await this.resolver.resolveProjectTargets(location)
 
         return { name, location, targets, type }
-      })
+      },
+      cpus().length
     )
 
     await this.updateProjects(yarnWorkspaces)

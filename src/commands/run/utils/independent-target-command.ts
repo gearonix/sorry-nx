@@ -18,6 +18,12 @@ enum TargetSeparators {
   PARALLEL = '&'
 }
 
+/**
+ * Creates a command configuration object for an independent target.
+ * @param rawOptions
+ * @param runOptions
+ * @param projectCwd
+ */
 export function createIndependentTargetCommand(
   rawOptions: AnyTarget | undefined,
   { runOptions, projectCwd }: CreateIndependentCommandOptions

@@ -1,6 +1,13 @@
 import { parseJson } from '@neodx/fs'
-import { entries, hasOwn, isObject, isTypeOfString } from '@neodx/std'
+import {
+  concurrently,
+  entries,
+  hasOwn,
+  isObject,
+  isTypeOfString
+} from '@neodx/std'
 import { Injectable } from '@nestjs/common'
+import { cpus } from 'node:os'
 import { resolve } from 'node:path'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
@@ -44,9 +51,9 @@ export class NpmPackageManager extends AbstractPackageManager {
 
     const dependencies = entries(metadata.dependencies)
 
-    // TODO: rewrite promise.all to parallel execution
-    const npmWorkspaces = await Promise.all(
-      dependencies.map(async ([name, dependency]) => {
+    const npmWorkspaces = await concurrently(
+      dependencies,
+      async ([name, dependency]) => {
         const normalizedPath = dependency.resolved.replace(/^file:..\//, '')
         const absolutePath = resolve(cwd, normalizedPath)
 
@@ -54,7 +61,8 @@ export class NpmPackageManager extends AbstractPackageManager {
           await this.resolver.resolveProjectTargets(absolutePath)
 
         return { name, location: absolutePath, targets, type }
-      })
+      },
+      cpus().length
     )
 
     await this.updateProjects(npmWorkspaces)

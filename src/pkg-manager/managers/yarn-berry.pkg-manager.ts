@@ -1,5 +1,6 @@
 import { parseJson } from '@neodx/fs'
-import { isTruthy, isTypeOfString } from '@neodx/std'
+import { concurrently, isTruthy, isTypeOfString } from '@neodx/std'
+import { cpus } from 'node:os'
 import { AbstractPackageManager } from '@/pkg-manager/managers/abstract.pkg-manager'
 import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
 import type { PackageManagerFactoryOptions } from '@/pkg-manager/pkg-manager.factory'
@@ -17,15 +18,17 @@ export class YarnBerryPackageManager extends AbstractPackageManager {
     const stdout = await this.exec('workspaces list --json')
     const serializedLines = stdout.trim().split('\n')
 
-    const workspaces = await Promise.all(
-      serializedLines.map(async (serializedMeta) => {
+    const workspaces = await concurrently(
+      serializedLines,
+      async (serializedMeta) => {
         const project = parseJson<WorkspaceProject>(serializedMeta)
         const { targets, type } = await this.resolver.resolveProjectTargets(
           project.location
         )
 
         return { ...project, targets, type }
-      })
+      },
+      cpus().length
     )
 
     await this.updateProjects(workspaces.filter(isTruthy))

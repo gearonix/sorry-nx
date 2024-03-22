@@ -18,8 +18,6 @@ import { ResolverService } from '@/resolver/resolver.service'
 import { invariant } from '@/shared/misc'
 import { createIndependentTargetCommand } from './utils/independent-target-command'
 
-// TODO: comment everything
-
 export interface RunCommandOptions {
   args?: string
   parallel?: boolean
@@ -32,7 +30,7 @@ export interface RunCommandOptions {
   options: {
     isDefault: true
   },
-  description: ''
+  description: 'Run command defined in project targets or package.json scripts.'
 })
 export class RunCommand extends CommandRunner {
   constructor(
@@ -45,12 +43,14 @@ export class RunCommand extends CommandRunner {
   }
 
   public async run(params: string[], options: RunCommandOptions) {
-    if (isEmpty(this.manager.projects)) {
+    const workspaceProjects = Array.from(this.manager.projects)
+
+    if (isEmpty(workspaceProjects)) {
       await this.manager.computeWorkspaceProjects()
     }
 
     const [target, project = ROOT_PROJECT] = isEmpty(params)
-      ? await buildTargetInfoPrompt(this.manager.projects)
+      ? await buildTargetInfoPrompt(workspaceProjects)
       : params
 
     invariant(target, 'Please specify a target. It cannot be empty.')
@@ -59,9 +59,7 @@ export class RunCommand extends CommandRunner {
     let projectCwd = options.cwd ?? process.cwd()
 
     if (project) {
-      const projectMeta = this.manager.projects.find(
-        ({ name }) => name === project
-      )
+      const projectMeta = workspaceProjects.find(({ name }) => name === project)
 
       invariant(
         projectMeta,

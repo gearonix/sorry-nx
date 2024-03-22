@@ -25,8 +25,7 @@ export interface MigrateCommandOptions {
 
 @Command({
   name: 'migrate',
-  // TODO: add descriptions
-  description: ''
+  description: 'Migrate package.json commands to a standardized format.'
 })
 export class MigrateCommand extends CommandRunner {
   constructor(
@@ -40,7 +39,7 @@ export class MigrateCommand extends CommandRunner {
 
   public async run(params: string[], options: MigrateCommandOptions) {
     await this.manager.computeWorkspaceProjects()
-    const { projects: workspaceProjects } = this.manager
+    const workspaceProjects = Array.from(this.manager.projects)
 
     if (options.all) {
       await Promise.all(

@@ -16,8 +16,7 @@ export interface ShowCommandOptions {
 
 @Command({
   name: 'show',
-  // TODO: add descriptions
-  description: ''
+  description: 'Show workspace projects graph information'
 })
 export class ShowCommand extends CommandRunner {
   constructor(
@@ -28,7 +27,6 @@ export class ShowCommand extends CommandRunner {
     super()
   }
 
-  // TODO: add usable parameter
   public async run(_: string[], options: ShowCommandOptions) {
     await this.manager.computeWorkspaceProjects()
 

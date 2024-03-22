@@ -10,8 +10,7 @@ import type {
 import type { ResolverService } from '@/resolver/resolver.service'
 
 export abstract class AbstractPackageManager {
-  // TODO: map set
-  public projects: WorkspaceProject[] = []
+  public projects: Set<WorkspaceProject> = new Set()
   protected readonly resolver: ResolverService
 
   constructor(
@@ -49,7 +48,9 @@ export abstract class AbstractPackageManager {
       type
     } satisfies WorkspaceProject
 
-    this.projects = [root, ...workspaces]
+    this.projects.clear()
+    this.projects.add(root)
+    workspaces.forEach(this.projects.add, this.projects)
   }
 
   public abstract computeWorkspaceProjects(): Promise<void>
