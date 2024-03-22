@@ -1,17 +1,17 @@
 {
-  "name": "gx",
+  "name": "@grnx/sorry-nx",
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@8.15.4",
   "author": "Uzhanin Egor <egor.uzhanin@gmail.com>",
   "license": "MIT",
-  "homepage": "https://github.com/gearonix/gx",
+  "homepage": "https://github.com/gearonix/sorry-nx",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gearonix/gx.git"
+    "url": "git+https://github.com/gearonix/sorry-nx.git"
   },
   "bin": {
-    "gx": "bin/gx.mjs"
+    "sx": "bin/sx.mjs"
   },
   "keywords": [
     "nx",

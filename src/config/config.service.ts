@@ -22,7 +22,7 @@ export class ConfigService extends ConfigValues {
       return ConfigSchema.parse(userConfig)
     } catch (error) {
       this.logger.error(
-        'Invalid .gxrc configuration. See below for detailed info.  \n'
+        'Invalid .sxrc configuration. See below for detailed info.  \n'
       )
       this.logger.error(error)
       process.exit(1)
@@ -30,13 +30,13 @@ export class ConfigService extends ConfigValues {
   }
 
   private get configPath() {
-    const customRcPath = process.env.GX_CONFIG_PATH
+    const customRcPath = process.env.SX_CONFIG_PATH
 
     const isWindows = process.platform === 'win32'
     const home = isWindows ? process.env.USERPROFILE : process.env.HOME
 
-    const defaultRcPath = resolve(home ?? '~/', '.gxrc')
-    const projectRcPath = resolve(process.cwd(), '.gxrc')
+    const defaultRcPath = resolve(home ?? '~/', '.sxrc')
+    const projectRcPath = resolve(process.cwd(), '.sxrc')
 
     const baseRcPath = customRcPath ?? defaultRcPath
 

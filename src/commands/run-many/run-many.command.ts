@@ -89,7 +89,7 @@ export class RunManyCommand extends CommandRunner {
 
           const project = projectMeta.name
           this.logger.log(
-            `${this.logger.greaterSignPrefix} gx run ${project}:${target}\n`
+            `${this.logger.greaterSignPrefix} sx run ${project}:${target}\n`
           )
           this.logger.mute()
           try {

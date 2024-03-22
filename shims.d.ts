@@ -4,6 +4,6 @@ declare module 'envfile'
 
 declare namespace NodeJS {
   interface Process {
-    GX_CONFIG_PATH: string
+    SX_CONFIG_PATH: string
   }
 }
