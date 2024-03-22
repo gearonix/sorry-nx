@@ -36,10 +36,10 @@ export class BunPackageManager extends AbstractPackageManager {
 
         const workspaceName = scopedPkgJson.name ?? null
         const workspaceDir = dirname(pattern)
-        const { targets } =
+        const { targets, type } =
           await this.resolver.resolveProjectTargets(workspaceDir)
 
-        return { name: workspaceName, location: workspaceDir, targets }
+        return { name: workspaceName, location: workspaceDir, targets, type }
       })
     )
 

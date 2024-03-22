@@ -10,13 +10,13 @@ import {
 } from 'nest-commander'
 import { dirname } from 'node:path'
 import { buildTargetInfoPrompt } from '@/commands/run/run.prompts'
-import { createIndependentTargetCommand } from '@/commands/run/utils/independent-target-command'
 import { LoggerService } from '@/logger'
 import type { AbstractPackageManager } from '@/pkg-manager'
 import { InjectPackageManager } from '@/pkg-manager'
 import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
 import { ResolverService } from '@/resolver/resolver.service'
 import { invariant } from '@/shared/misc'
+import { createIndependentTargetCommand } from './utils/independent-target-command'
 
 export interface RunCommandOptions {
   args?: string

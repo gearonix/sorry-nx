@@ -31,9 +31,10 @@ export class PnpmPackageManager extends AbstractPackageManager {
         const isRoot = pathEqual(path, process.cwd())
         if (isRoot) return null
 
-        const { targets } = await this.resolver.resolveProjectTargets(path)
+        const { targets, type } =
+          await this.resolver.resolveProjectTargets(path)
 
-        return { name, location: path, targets }
+        return { name, location: path, targets, type }
       })
     )
 

@@ -38,12 +38,13 @@ export abstract class AbstractPackageManager {
     workspaces: WorkspaceProject[] = []
   ): Promise<void> {
     const cwd = process.cwd()
-    const { targets } = await this.resolver.resolveProjectTargets(cwd)
+    const { targets, type } = await this.resolver.resolveProjectTargets(cwd)
 
     const root = {
       name: ROOT_PROJECT,
       location: cwd,
-      targets
+      targets,
+      type
     } satisfies WorkspaceProject
 
     this.projects = [root, ...workspaces]

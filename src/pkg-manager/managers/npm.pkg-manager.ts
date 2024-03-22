@@ -50,10 +50,10 @@ export class NpmPackageManager extends AbstractPackageManager {
         const normalizedPath = dependency.resolved.replace(/^file:..\//, '')
         const absolutePath = resolve(cwd, normalizedPath)
 
-        const { targets } =
+        const { targets, type } =
           await this.resolver.resolveProjectTargets(absolutePath)
 
-        return { name, location: absolutePath, targets }
+        return { name, location: absolutePath, targets, type }
       })
     )
 

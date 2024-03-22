@@ -37,9 +37,10 @@ export class YarnPackageManager extends AbstractPackageManager {
     const yarnWorkspaces = await Promise.all(
       workspacesEntries.map(async ([name, metadata]) => {
         const location = toAbsolutePath(metadata.location)
-        const { targets } = await this.resolver.resolveProjectTargets(location)
+        const { targets, type } =
+          await this.resolver.resolveProjectTargets(location)
 
-        return { name, location, targets }
+        return { name, location, targets, type }
       })
     )
 

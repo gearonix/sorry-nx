@@ -20,11 +20,11 @@ export class YarnBerryPackageManager extends AbstractPackageManager {
     const workspaces = await Promise.all(
       serializedLines.map(async (serializedMeta) => {
         const project = parseJson<WorkspaceProject>(serializedMeta)
-        const { targets } = await this.resolver.resolveProjectTargets(
+        const { targets, type } = await this.resolver.resolveProjectTargets(
           project.location
         )
 
-        return { ...project, targets }
+        return { ...project, targets, type }
       })
     )
 

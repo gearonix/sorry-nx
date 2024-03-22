@@ -1,9 +1,11 @@
+import type { TargetType } from '@/resolver/resolver.types'
 import type { TargetOptions } from '@/resolver/targets/targets-resolver.schema'
 
 export interface WorkspaceProject {
   name: string | null
   location: string
   targets: TargetOptions
+  type: TargetType
 }
 
 export interface RunCommandOptions {
