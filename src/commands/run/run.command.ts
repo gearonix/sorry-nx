@@ -2,7 +2,12 @@ import { ensureDir } from '@neodx/fs'
 import { hasOwn, isEmpty, isObject } from '@neodx/std'
 import { Inject } from '@nestjs/common'
 import { execaCommand as $ } from 'execa'
-import { Command, CommandRunner, Option } from 'nest-commander'
+import {
+  CliUtilityService,
+  Command,
+  CommandRunner,
+  Option
+} from 'nest-commander'
 import { dirname } from 'node:path'
 import { buildTargetInfoPrompt } from '@/commands/run/run.prompts'
 import { createIndependentTargetCommand } from '@/commands/run/utils/independent-target-command'
@@ -11,11 +16,13 @@ import type { AbstractPackageManager } from '@/pkg-manager'
 import { InjectPackageManager } from '@/pkg-manager'
 import { PackageManager, ROOT_PROJECT } from '@/pkg-manager/pkg-manager.consts'
 import { ResolverService } from '@/resolver/resolver.service'
-import type { AnyTarget } from '@/resolver/targets/targets-resolver.schema'
 import { invariant } from '@/shared/misc'
 
-export interface BaseInitOptions {
+export interface RunCommandOptions {
   args?: string
+  parallel?: boolean
+  cwd?: string
+  envFile?: string
 }
 
 @Command({
@@ -29,12 +36,13 @@ export class RunCommand extends CommandRunner {
   constructor(
     @InjectPackageManager() private readonly manager: AbstractPackageManager,
     @Inject(LoggerService) private readonly logger: LoggerService,
-    @Inject(ResolverService) private readonly resolver: ResolverService
+    @Inject(ResolverService) private readonly resolver: ResolverService,
+    private readonly utilityService: CliUtilityService
   ) {
     super()
   }
 
-  public async run(params: string[], options: BaseInitOptions) {
+  public async run(params: string[], options: RunCommandOptions) {
     if (isEmpty(this.manager.projects)) {
       await this.manager.computeWorkspaceProjects()
     }
@@ -98,11 +106,11 @@ export class RunCommand extends CommandRunner {
 
     if (targetType === 'targets') {
       const { command, env, cwd, args } = createIndependentTargetCommand(
-        targets[target] as AnyTarget,
-        { defaultArgs: options.args, projectCwd }
+        targets[target],
+        { runOptions: options, projectCwd }
       )
 
-      await $(`${command} ${args}`, { cwd, env })
+      await $(`${command} ${args}`, { cwd, env, stdio: 'inherit', shell: true })
     }
 
     timeEnd(`Successfully ran target ${target} for project ${project}`)
@@ -119,5 +127,29 @@ export class RunCommand extends CommandRunner {
     invariant(isValid, "The 'args' parameter is invalid. ")
 
     return args
+  }
+
+  @Option({
+    flags: '--cwd [string]',
+    name: 'cwd'
+  })
+  public parseCwd(cwd: string) {
+    return cwd
+  }
+
+  @Option({
+    flags: '--parallel [boolean]',
+    name: 'parallel'
+  })
+  public parseParallel(parallel: string) {
+    return this.utilityService.parseBoolean(parallel)
+  }
+
+  @Option({
+    flags: '--envFile [string]',
+    name: 'envFile'
+  })
+  public parseEnvFile(envFile: string) {
+    return envFile
   }
 }

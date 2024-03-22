@@ -21,11 +21,17 @@ export class TargetsResolverService {
   ): Promise<TargetOptions | null> {
     const targetJsonPath = resolve(projectCwd, this.cfg.commandsFile)
 
-    if (!exists(targetJsonPath)) return null
+    const targetExists = await exists(targetJsonPath)
+
+    if (!targetExists) return null
 
     await assertFile(targetJsonPath)
 
-    const targetsJSON = await readJson<AnyRecord>(targetJsonPath)
+    const targetsJSON = await readJson<AnyRecord>(
+      targetJsonPath,
+      `The ${this.cfg.commandsFile} file is invalid.`
+    )
+
     const targets = this.validateTargetsSchema(targetsJSON, projectCwd)
 
     return targets.values
@@ -38,14 +44,14 @@ export class TargetsResolverService {
       const isZodError = error_ instanceof z.ZodError
 
       if (!isZodError) {
-        this.logger.error('Unknown error parsing commands.json')
+        this.logger.error(`Unknown error parsing ${this.cfg.commandsFile}`)
         throw error_
       }
 
       this.logger.error(
-        `Invalid commands.json file. (${projectPath}) See below for detailed info. \n`
+        `Invalid ${this.cfg.commandsFile} file. (${projectPath}) See below for detailed info. \n`
       )
-      this.logger.error(error_.format())
+      this.logger.info(error_.format())
 
       process.exit(1)
     }

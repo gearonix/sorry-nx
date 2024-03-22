@@ -21,6 +21,9 @@ export class ConfigService extends ConfigValues {
     try {
       return ConfigSchema.parse(userConfig)
     } catch (error) {
+      this.logger.error(
+        'Invalid .gxrc configuration. See below for detailed info.  \n'
+      )
       this.logger.error(error)
       process.exit(1)
     }

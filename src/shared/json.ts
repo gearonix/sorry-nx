@@ -19,16 +19,15 @@ export interface PackageJson {
 }
 
 export async function readJson<Result extends AnyRecord = AnyRecord>(
-  path: string
+  path: string,
+  error = 'Unable to parse JSON string.'
 ): Promise<Result> {
   try {
     const jsonFile = await readFile(resolve(process.cwd(), path), 'utf-8')
 
     return parseJson(jsonFile)
   } catch {
-    console.error(
-      `\n ${ERROR_PREFIX}  ${chalk.bold(chalk.red('Unable to parse JSON string.'))}\n`
-    )
+    console.error(`\n ${ERROR_PREFIX}  ${chalk.bold(chalk.red(error))}\n`)
 
     process.exit(1)
   }

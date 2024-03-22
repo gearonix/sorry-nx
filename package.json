@@ -13,7 +13,12 @@
   "bin": {
     "gx": "bin/gx.mjs"
   },
-  "keywords": ["nx", "runner", "cli", "tasks-runner"],
+  "keywords": [
+    "nx",
+    "runner",
+    "cli",
+    "tasks-runner"
+  ],
   "sideEffects": false,
   "exports": {
     ".": {
@@ -84,6 +89,7 @@
     "envfile": "^7.1.0",
     "eslint-kit": "^10.19.0",
     "execa": "^8.0.1",
+    "ini": "^4.1.2",
     "inquirer": "^9.2.15",
     "inquirer-search-list": "^1.2.6",
     "inquirer-tree-prompt": "^1.1.2",

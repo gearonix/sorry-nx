@@ -19,8 +19,6 @@ export abstract class AbstractPackageManager {
     private command: string
   ) {
     this.resolver = options.resolver
-
-    this.computeWorkspaceProjects()
   }
 
   public async exec(args: string | string[], options?: ExecaOptions) {

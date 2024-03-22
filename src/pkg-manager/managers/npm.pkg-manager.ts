@@ -57,7 +57,7 @@ export class NpmPackageManager extends AbstractPackageManager {
       })
     )
 
-    this.updateProjects(npmWorkspaces)
+    await this.updateProjects(npmWorkspaces)
   }
 
   public createRunCommand(opts: RunCommandOptions): string[] {

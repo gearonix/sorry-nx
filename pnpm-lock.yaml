@@ -35,6 +35,9 @@ importers:
       execa:
         specifier: ^8.0.1
         version: 8.0.1
+      ini:
+        specifier: ^4.1.2
+        version: 4.1.2
       inquirer:
         specifier: ^9.2.15
         version: 9.2.15
@@ -4065,7 +4068,6 @@ packages:
   /ini@4.1.2:
     resolution: {integrity: sha512-AMB1mvwR1pyBFY/nSevUX6y8nJWS63/SzUKD3JyQn97s4xgIdgQPT75IRouIiBAN4yLQBUShNYVW0+UG25daCw==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-    dev: true
 
   /inline-style-parser@0.1.1:
     resolution: {integrity: sha512-7NXolsK4CAS5+xvdj5OMMbI962hU/wvwoxk+LWR9Ek9bVtyuuYScDN6eS0rUm6TxApFpw7CX1o4uJzcd4AyD3Q==}

@@ -44,4 +44,4 @@ export const packageManagerMatchers = [
   }
 ] satisfies PackageManagerMatcher[]
 
-export const ROOT_PROJECT = 'ROOT_PROJECT_WORKSPACE' as const
+export const ROOT_PROJECT = '$$root' as const

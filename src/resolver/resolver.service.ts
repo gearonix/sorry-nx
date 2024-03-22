@@ -1,16 +1,18 @@
-import { entries, sortObjectByOrder } from '@neodx/std'
+import { entries, filterObject, sortObjectByOrder } from '@neodx/std'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@/config'
 import { LoggerService } from '@/logger'
-import type { PackageJsonResolverService } from '@/resolver/package/package.resolver.service'
+import { PackageJsonResolverService } from '@/resolver/package/package-resolver.service'
 import type { ResolvedTargets, TargetType } from '@/resolver/resolver.types'
 import type { TargetOptions } from '@/resolver/targets/targets-resolver.schema'
-import type { TargetsResolverService } from '@/resolver/targets/targets-resolver.service'
+import { TargetsResolverService } from '@/resolver/targets/targets-resolver.service'
 
 @Injectable()
 export class ResolverService {
   constructor(
+    @Inject(TargetsResolverService)
     private readonly targetsResolver: TargetsResolverService,
+    @Inject(PackageJsonResolverService)
     private readonly pkgResolver: PackageJsonResolverService,
     @Inject(ConfigService) private readonly cfg: ConfigService,
     @Inject(LoggerService) private readonly logger: LoggerService
@@ -22,8 +24,12 @@ export class ResolverService {
       this.cfg.preferredResolvingOrder
     )
 
-    for (const [type, resolveTargets] of entries(sortedResolvers)) {
-      const targets = await resolveTargets.call(this, cwd)
+    const normalizedResolvers = filterObject(sortedResolvers, (_, key) =>
+      this.cfg.preferredResolvingOrder.includes(key)
+    )
+
+    for (const [type, resolveTargets] of entries(normalizedResolvers)) {
+      const targets = await resolveTargets(cwd)
 
       if (targets) {
         return { type, targets }
@@ -32,7 +38,8 @@ export class ResolverService {
 
     this.logger.error(
       `Error occurred while resolving project targets.
-      Please check if preferredResolvingOrder is set correctly`
+      Please check if preferredResolvingOrder is set correctly.
+      (${cwd})`
     )
     process.exit(1)
   }
@@ -41,10 +48,14 @@ export class ResolverService {
     TargetType,
     (cwd: string) => Promise<TargetOptions | null>
   > {
+    // TODO: rewrite
     return {
-      'package-scripts': this.pkgResolver.resolvePackageJsonScripts,
-      // eslint-disable-next-line prettier/prettier
-      'targets': this.targetsResolver.resolveProjectTargets
+      'package-scripts': this.pkgResolver.resolvePackageJsonScripts.bind(
+        this.pkgResolver
+      ),
+      targets: this.targetsResolver.resolveProjectTargets.bind(
+        this.targetsResolver
+      )
     }
   }
 }
