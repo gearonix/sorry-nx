@@ -4,122 +4,120 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-importers:
+dependencies:
+  '@neodx/fs':
+    specifier: ^0.0.11
+    version: 0.0.11
+  '@neodx/std':
+    specifier: ^0.3.0
+    version: 0.3.0
+  '@nestjs/common':
+    specifier: ^10.3.5
+    version: 10.3.5(reflect-metadata@0.2.1)(rxjs@7.8.1)
+  '@nestjs/core':
+    specifier: ^10.3.5
+    version: 10.3.5(@nestjs/common@10.3.5)(@nestjs/platform-express@10.3.5)(reflect-metadata@0.2.1)(rxjs@7.8.1)
+  '@nestjs/platform-express':
+    specifier: ^10.3.5
+    version: 10.3.5(@nestjs/common@10.3.5)(@nestjs/core@10.3.5)
+  chalk:
+    specifier: ^5.3.0
+    version: 5.3.0
+  envfile:
+    specifier: ^7.1.0
+    version: 7.1.0
+  eslint-kit:
+    specifier: ^10.23.0
+    version: 10.23.0(effector@23.2.0)(eslint@8.57.0)(prettier@3.2.5)(svelte@3.59.2)(typescript@5.4.3)
+  execa:
+    specifier: ^8.0.1
+    version: 8.0.1
+  ini:
+    specifier: ^4.1.2
+    version: 4.1.2
+  inquirer:
+    specifier: ^9.2.16
+    version: 9.2.16
+  inquirer-search-list:
+    specifier: ^1.2.6
+    version: 1.2.6
+  inquirer-tree-prompt:
+    specifier: ^1.1.2
+    version: 1.1.2
+  nest-commander:
+    specifier: ^3.12.5
+    version: 3.12.5(@nestjs/common@10.3.5)(@nestjs/core@10.3.5)(@types/inquirer@9.0.7)(typescript@5.4.3)
+  path-equal:
+    specifier: ^1.2.5
+    version: 1.2.5
+  which:
+    specifier: ^4.0.0
+    version: 4.0.0
+  zod:
+    specifier: ^3.22.4
+    version: 3.22.4
 
-  .:
-    dependencies:
-      '@neodx/fs':
-        specifier: ^0.0.11
-        version: 0.0.11
-      '@neodx/std':
-        specifier: ^0.3.0
-        version: 0.3.0
-      '@nestjs/common':
-        specifier: ^10.3.5
-        version: 10.3.5(reflect-metadata@0.2.1)(rxjs@7.8.1)
-      '@nestjs/core':
-        specifier: ^10.3.5
-        version: 10.3.5(@nestjs/common@10.3.5)(@nestjs/platform-express@10.3.5)(reflect-metadata@0.2.1)(rxjs@7.8.1)
-      '@nestjs/platform-express':
-        specifier: ^10.3.5
-        version: 10.3.5(@nestjs/common@10.3.5)(@nestjs/core@10.3.5)
-      chalk:
-        specifier: ^5.3.0
-        version: 5.3.0
-      envfile:
-        specifier: ^7.1.0
-        version: 7.1.0
-      eslint-kit:
-        specifier: ^10.23.0
-        version: 10.23.0(effector@23.2.0)(eslint@8.57.0)(prettier@3.2.5)(svelte@3.59.2)(typescript@5.4.3)
-      execa:
-        specifier: ^8.0.1
-        version: 8.0.1
-      ini:
-        specifier: ^4.1.2
-        version: 4.1.2
-      inquirer:
-        specifier: ^9.2.16
-        version: 9.2.16
-      inquirer-search-list:
-        specifier: ^1.2.6
-        version: 1.2.6
-      inquirer-tree-prompt:
-        specifier: ^1.1.2
-        version: 1.1.2
-      nest-commander:
-        specifier: ^3.12.5
-        version: 3.12.5(@nestjs/common@10.3.5)(@nestjs/core@10.3.5)(@types/inquirer@9.0.7)(typescript@5.4.3)
-      path-equal:
-        specifier: ^1.2.5
-        version: 1.2.5
-      which:
-        specifier: ^4.0.0
-        version: 4.0.0
-      zod:
-        specifier: ^3.22.4
-        version: 3.22.4
-    devDependencies:
-      '@antfu/ni':
-        specifier: ^0.21.12
-        version: 0.21.12
-      '@types/ini':
-        specifier: ^4.1.0
-        version: 4.1.0
-      '@types/inquirer':
-        specifier: ^9.0.7
-        version: 9.0.7
-      '@types/node':
-        specifier: ^20.11.30
-        version: 20.11.30
-      '@types/which':
-        specifier: ^3.0.3
-        version: 3.0.3
-      bumpp:
-        specifier: ^9.4.0
-        version: 9.4.0
-      eslint:
-        specifier: ^8.57.0
-        version: 8.57.0
-      eslint-plugin-oxlint:
-        specifier: ^0.2.7
-        version: 0.2.7
-      esno:
-        specifier: ^4.7.0
-        version: 4.7.0
-      lint-staged:
-        specifier: ^15.2.2
-        version: 15.2.2
-      oxlint:
-        specifier: ^0.2.14
-        version: 0.2.14
-      pnpm:
-        specifier: ^8.15.5
-        version: 8.15.5
-      prettier:
-        specifier: ^3.2.5
-        version: 3.2.5
-      rimraf:
-        specifier: ^5.0.5
-        version: 5.0.5
-      simple-git-hooks:
-        specifier: ^2.11.0
-        version: 2.11.0
-      taze:
-        specifier: ^0.13.3
-        version: 0.13.3
-      typescript:
-        specifier: ^5.4.3
-        version: 5.4.3
-      unbuild:
-        specifier: ^2.0.0
-        version: 2.0.0(typescript@5.4.3)
-      vite:
-        specifier: ^5.2.3
-        version: 5.2.3(@types/node@20.11.30)
-      vitest:
-        specifier: ^1.4.0
-        version: 1.4.0(@types/node@20.11.30)
+devDependencies:
+  '@antfu/ni':
+    specifier: ^0.21.12
+    version: 0.21.12
+  '@types/ini':
+    specifier: ^4.1.0
+    version: 4.1.0
+  '@types/inquirer':
+    specifier: ^9.0.7
+    version: 9.0.7
+  '@types/node':
+    specifier: ^20.11.30
+    version: 20.11.30
+  '@types/which':
+    specifier: ^3.0.3
+    version: 3.0.3
+  bumpp:
+    specifier: ^9.4.0
+    version: 9.4.0
+  eslint:
+    specifier: ^8.57.0
+    version: 8.57.0
+  eslint-plugin-oxlint:
+    specifier: ^0.2.7
+    version: 0.2.7
+  esno:
+    specifier: ^4.7.0
+    version: 4.7.0
+  lint-staged:
+    specifier: ^15.2.2
+    version: 15.2.2
+  oxlint:
+    specifier: ^0.2.18
+    version: 0.2.18
+  pnpm:
+    specifier: ^8.15.5
+    version: 8.15.5
+  prettier:
+    specifier: ^3.2.5
+    version: 3.2.5
+  rimraf:
+    specifier: ^5.0.5
+    version: 5.0.5
+  simple-git-hooks:
+    specifier: ^2.11.0
+    version: 2.11.0
+  taze:
+    specifier: ^0.13.3
+    version: 0.13.3
+  typescript:
+    specifier: ^5.4.3
+    version: 5.4.3
+  unbuild:
+    specifier: ^2.0.0
+    version: 2.0.0(typescript@5.4.3)
+  vite:
+    specifier: ^5.2.3
+    version: 5.2.3(@types/node@20.11.30)
+  vitest:
+    specifier: ^1.4.0
+    version: 1.4.0(@types/node@20.11.30)
 
 packages:
 
@@ -1649,64 +1647,64 @@ packages:
       - encoding
     dev: false
 
-  /@oxlint/darwin-arm64@0.2.14:
-    resolution: {integrity: sha512-ddCNJDIpwdtDy2EveF76jXmHOs63b2AU8vvzHZ4cw6xtHxXgfGSOTAckWfJLKXq+s5LDROMVL2DXIcuizaXYBw==}
+  /@oxlint/darwin-arm64@0.2.18:
+    resolution: {integrity: sha512-DpPId0O8hHh1/PjbtJSMi3DvgK5ol49hB+jiogYGXvBPOF2/8/tG1v7dtbACx4pcorUMu4EHHKHigasnx114cQ==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@oxlint/darwin-x64@0.2.14:
-    resolution: {integrity: sha512-EvHOIjDpNgMXlDGk7Sr/2C0VszHj7riV+VhjGXyZwVCNFfT6jR2CfJNagTUp9AICkyESPY7UtOHYcsEsEKCtAw==}
+  /@oxlint/darwin-x64@0.2.18:
+    resolution: {integrity: sha512-hdnPhG/nxF2F8YI9lg3uYMH1ZYxSKiDPu2srey1Xvo2LZChNnvbvxXNS5UYAxG9f/U6VbH4WYfUcqbNZW5Tnzw==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@oxlint/linux-arm64-gnu@0.2.14:
-    resolution: {integrity: sha512-ptX6gC9wLCI3EMgYJd8cUIbcwTZv7aubuFnCg68bop2SdYAtYZIQQfazsOB/+a1pt/ISkheL19rGeaedmRqaPQ==}
+  /@oxlint/linux-arm64-gnu@0.2.18:
+    resolution: {integrity: sha512-bhCHYlIn8I5bw5AulQKhYJzanLFoi7mgIkqzfiJibCrGrQh3IKv3h0k8bWHqLEYMmufhGz7yhS96oY3Pe0K1Aw==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@oxlint/linux-arm64-musl@0.2.14:
-    resolution: {integrity: sha512-F7hzgZB65C+K1ZJkUG8vgDzo+AD/DVU2cUU7o0pv6/cn1BGjcERiyJECzrPXsnYSgeaT88eXoUgnDZNf5mH7Lw==}
+  /@oxlint/linux-arm64-musl@0.2.18:
+    resolution: {integrity: sha512-TbZONlryL36xWLUCNRhYZ0m92io6hiN0Ho8ez4T5BoTWwaKwyTdAvpbH7vFDlVDAsp33GB81DXsFSAjPq8PIng==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@oxlint/linux-x64-gnu@0.2.14:
-    resolution: {integrity: sha512-mEkPz/GXOkPC3HNwN5SHGaT+ajk+twTuPHiI6TRKSbNCMHvi4kV9Ftana+t2hV5IfpbieFhnOsO0iH/iUOdKTA==}
+  /@oxlint/linux-x64-gnu@0.2.18:
+    resolution: {integrity: sha512-Leupfl0E85BC1t8zB+vqUeeKami+Lo/8HiihLUQAbjz+O8J2WuNaOmt/GURK5jINQhEASBw8dnhNFBMKYe6ZgA==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@oxlint/linux-x64-musl@0.2.14:
-    resolution: {integrity: sha512-0jmm/NcD78etW+G9jHAuFjQdl9GW2bXxlOR8/y2jYyYTuCtSuqhzJCK2kWoAcBynacDIsDC+fCZF7qHOPrDHDA==}
+  /@oxlint/linux-x64-musl@0.2.18:
+    resolution: {integrity: sha512-THG4LZ8KeCy87E4tHqC765acRW0dyXdgzqERi3idjSupCH8juTpk9UfZVcpxcqEicXnEuZDkBQpO8nboyFng3Q==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@oxlint/win32-arm64@0.2.14:
-    resolution: {integrity: sha512-P5vaQFjtVnshk94PMaW/kot/FKH9y8fjhd7vwGp6eRO32QOkSMbG7jOtuvlFOb4E9lGyQaihJ9yVbP9vmkvzvw==}
+  /@oxlint/win32-arm64@0.2.18:
+    resolution: {integrity: sha512-X/boJsMQiuO2Wfu3eabWefFlb0+O5oSXjcG0gmIE9aySNMy/pVyCno2/RGy+0f4xSjBZXmamCsEoQp/E8NeDQQ==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@oxlint/win32-x64@0.2.14:
-    resolution: {integrity: sha512-ORXoR8DpAOWX/3YDBwOCg+yUORu6cK/GUYEq22BpUXn/HRljiFbEBoBWadOhfow/K+/j9OGUxPeepe8zthN2iA==}
+  /@oxlint/win32-x64@0.2.18:
+    resolution: {integrity: sha512-LmwDhDaZYd20WKmHPeITYNazGVUBFvs7D9+WJ+ecx+bX/6euFp8j+e/4sUzxR5gk6pecqyA6WEld52Gy6W92jg==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
@@ -5872,19 +5870,19 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /oxlint@0.2.14:
-    resolution: {integrity: sha512-LFOnbhtpitIqtHqyBDYAvT5g3ckm3fZ6xAMU8zkaDwC4ofC29ZpxAPuF42ZFJOw1UnufJPUutECSwMco2ho/Fg==}
+  /oxlint@0.2.18:
+    resolution: {integrity: sha512-/6tR2hm9vN/cjJarItkDPeSWDqPbkQ6pVDzePR2La5cNA+kn1Gt7k0ZHxcpTuhZOI/lhRD2z4C0v/m9kja/0cQ==}
     engines: {node: '>=14.*'}
     hasBin: true
     optionalDependencies:
-      '@oxlint/darwin-arm64': 0.2.14
-      '@oxlint/darwin-x64': 0.2.14
-      '@oxlint/linux-arm64-gnu': 0.2.14
-      '@oxlint/linux-arm64-musl': 0.2.14
-      '@oxlint/linux-x64-gnu': 0.2.14
-      '@oxlint/linux-x64-musl': 0.2.14
-      '@oxlint/win32-arm64': 0.2.14
-      '@oxlint/win32-x64': 0.2.14
+      '@oxlint/darwin-arm64': 0.2.18
+      '@oxlint/darwin-x64': 0.2.18
+      '@oxlint/linux-arm64-gnu': 0.2.18
+      '@oxlint/linux-arm64-musl': 0.2.18
+      '@oxlint/linux-x64-gnu': 0.2.18
+      '@oxlint/linux-x64-musl': 0.2.18
+      '@oxlint/win32-arm64': 0.2.18
+      '@oxlint/win32-x64': 0.2.18
     dev: true
 
   /p-limit@2.3.0:
@@ -6292,6 +6290,7 @@ packages:
 
   /reflect-metadata@0.2.1:
     resolution: {integrity: sha512-i5lLI6iw9AU3Uu4szRNPPEkomnkjRTaVt9hy/bn5g/oSzekBSMeLZblcjP74AW0vBabqERLLIrz+gR8QYR54Tw==}
+    deprecated: This version has a critical bug in fallback handling. Please upgrade to reflect-metadata@0.2.2 or newer.
     dev: false
 
   /reflect.getprototypeof@1.0.5:
