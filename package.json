@@ -57,7 +57,7 @@
     "@antfu/ni": "^0.21.12",
     "@types/ini": "^4.1.0",
     "@types/inquirer": "^9.0.7",
-    "@types/node": "^20.11.30",
+    "@types/node": "^20.12.11",
     "@types/which": "^3.0.3",
     "bumpp": "^9.4.0",
     "eslint": "^8.57.0",
